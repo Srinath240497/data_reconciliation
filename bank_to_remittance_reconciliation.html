@@ -1,0 +1,133 @@
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>broker</th>
+      <th>statement_reference</th>
+      <th>bank_transaction_ids</th>
+      <th>receipt_dates</th>
+      <th>statement_total</th>
+      <th>currency</th>
+      <th>bank_amount_received</th>
+      <th>variance</th>
+      <th>status</th>
+      <th>reason</th>
+      <th>source_file_sheet</th>
+      <th>source_row</th>
+      <th>bank_narratives</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Apex Risk Partners Ltd</td>
+      <td>APX-APR-2026</td>
+      <td>BANK-0001</td>
+      <td>2026-05-03</td>
+      <td>32517.5</td>
+      <td>GBP</td>
+      <td>32517.5</td>
+      <td>0.0</td>
+      <td>matched</td>
+      <td>reference APX-APR-2026; name APEX. Combined receipts 32,517.50 equal the statement total.</td>
+      <td>apex_risk_partners_remittance_apr_2026.csv</td>
+      <td>13</td>
+      <td>APEX RISK PARTNERS APRIL STATEMENT APX-APR-2026</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Continental Coverholders SA</td>
+      <td>CON-APR-2026</td>
+      <td>BANK-0005</td>
+      <td>2026-05-06</td>
+      <td>11868.0</td>
+      <td>GBP</td>
+      <td>11867.8</td>
+      <td>-0.2</td>
+      <td>amount difference</td>
+      <td>name CONTINENTAL. Bank received 11,867.80 against statement total 11,868.00 (variance -0.20). Bank narrative: CONTINENTAL COVERHOLDERS APRIL SETTLEMENT EUR ...</td>
+      <td>continental_coverholders_apr_2026.xlsx | EUR Settlement</td>
+      <td>9</td>
+      <td>CONTINENTAL COVERHOLDERS APRIL SETTLEMENT EUR FX 0.8600</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Harbour Specialty Ltd</td>
+      <td>HRB-APR-2026</td>
+      <td></td>
+      <td></td>
+      <td>36500.0</td>
+      <td>GBP</td>
+      <td>0.0</td>
+      <td>-36500.0</td>
+      <td>no identified bank receipt</td>
+      <td>No bank credit names this broker or quotes this statement reference.</td>
+      <td>harbour_specialty_remittance_apr_2026.xlsx | Summary</td>
+      <td>4</td>
+      <td></td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Northshore Broking Ltd</td>
+      <td>REM-0426-NSB</td>
+      <td>BANK-0002</td>
+      <td>2026-05-03</td>
+      <td>50000.0</td>
+      <td>GBP</td>
+      <td>49990.0</td>
+      <td>-10.0</td>
+      <td>amount difference</td>
+      <td>reference REM-0426-NSB; name NORTHSHORE. Bank received 49,990.00 against statement total 50,000.00 (variance -10.00). Bank narrative: NORTHSHORE BROKING LTD...</td>
+      <td>northshore_broking_remittance_apr_2026.xlsx | Cover</td>
+      <td>4</td>
+      <td>NORTHSHORE BROKING LTD REM-0426-NSB OUR CHG GBP10 NET</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Pioneer Wholesale Brokers</td>
+      <td>PIO-MAY26</td>
+      <td>BANK-0003, BANK-0004</td>
+      <td>2026-05-04, 2026-05-05</td>
+      <td>200000.0</td>
+      <td>GBP</td>
+      <td>200000.0</td>
+      <td>0.0</td>
+      <td>matched</td>
+      <td>reference PIO-MAY26; name PIONEER. Combined receipts 200,000.00 equal the statement total.</td>
+      <td>pioneer_wholesale_statement_may_2026.csv</td>
+      <td>6</td>
+      <td>PIONEER WHOLESALE REM PIO-MAY26 A | PIONEER WHOLESALE REM PIO-MAY26 B</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>UNKNOWN BROKER SERVICES</td>
+      <td></td>
+      <td>BANK-0006</td>
+      <td>2026-05-07</td>
+      <td>NaN</td>
+      <td>GBP</td>
+      <td>28750.0</td>
+      <td>NaN</td>
+      <td>unmatched bank credit</td>
+      <td>no broker name or statement reference in the bank fields. Narrative: UBS CLIENT MONEY MAY PREMIUMS.</td>
+      <td>bank_transactions_may_2026.csv</td>
+      <td></td>
+      <td>UBS CLIENT MONEY MAY PREMIUMS</td>
+    </tr>
+  </tbody>
+</table>
+</div>

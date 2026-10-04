@@ -1,0 +1,141 @@
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>dataset</th>
+      <th>source_file</th>
+      <th>source_sheet</th>
+      <th>detail_rows</th>
+      <th>columns</th>
+      <th>missing_key_fields</th>
+      <th>currencies</th>
+      <th>controls</th>
+      <th>observations</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>bank_transactions</td>
+      <td>bank_transactions_may_2026.csv</td>
+      <td></td>
+      <td>7</td>
+      <td>transaction_id, account_name, booking_date, value_date, currency, credit_amount, debit_amount, counterparty_name, ba...</td>
+      <td>credit_amount: 1</td>
+      <td>GBP</td>
+      <td></td>
+      <td>booking_date mixes slash dates and ISO dates; blank values in credit_amount, debit_amount</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>premium_bdx</td>
+      <td>premium_bdx_april_2026.csv</td>
+      <td></td>
+      <td>22</td>
+      <td>bdx_record_id, broker_name, broker_id, policy_reference, risk_reference, umr, insured_name, inception_date, transact...</td>
+      <td>none</td>
+      <td>EUR, GBP</td>
+      <td></td>
+      <td>blank values in bdx_notes</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>apex_risk_partners_remittance_apr_2026.csv</td>
+      <td>apex_risk_partners_remittance_apr_2026.csv</td>
+      <td></td>
+      <td>7</td>
+      <td>Broker, Statement ID, Policy No, Insured, Transaction Type, Accounting Period, Gross Premium, Commission %, Commissi...</td>
+      <td>none</td>
+      <td>GBP</td>
+      <td>banner: Broker=Apex Risk Partners Ltd (row 1); banner: Statement ID=APX-APR-2026 (row 2); banner: Period=April 2026 ...</td>
+      <td>2 detail rows are exact duplicates of another row; Gross Premium mixes currency prefixes and bare numbers; IPT mixes...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>continental_coverholders_apr_2026.xlsx | EUR Settlement</td>
+      <td>continental_coverholders_apr_2026.xlsx</td>
+      <td>EUR Settlement</td>
+      <td>3</td>
+      <td>Policy, Insured, Txn Type, Original CCY, Net Due Original CCY, FX Rate Used, GBP Settlement Amount, Notes</td>
+      <td>none</td>
+      <td>EUR, GBP</td>
+      <td>banner: Broker=Continental Coverholders SA (row 1); banner: Statement Ref=CON-APR-2026 (row 2); banner: Settlement C...</td>
+      <td>blank values in Notes</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>harbour_specialty_remittance_apr_2026.xlsx | Items</td>
+      <td>harbour_specialty_remittance_apr_2026.xlsx</td>
+      <td>Items</td>
+      <td>3</td>
+      <td>Line ID, Policy / Risk Ref, Insured Name, Inception, Txn Type, Gross, Commission, Net Due, Comment</td>
+      <td>Policy / Risk Ref: 1</td>
+      <td></td>
+      <td>statement_total: TOTAL=36500 (row 5)</td>
+      <td>blank values in Policy / Risk Ref, Comment</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>northshore_broking_remittance_apr_2026.xlsx | Remittance</td>
+      <td>northshore_broking_remittance_apr_2026.xlsx</td>
+      <td>Remittance</td>
+      <td>4</td>
+      <td>Contract No, Assured, UW Ref, Transaction Date, Currency, Gross Amount, Brokerage %, Brokerage Amount, Tax/IPT, Amou...</td>
+      <td>none</td>
+      <td>GBP</td>
+      <td>statement_total: TOTAL=50000 (row 6)</td>
+      <td>blank values in Comments</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>pioneer_wholesale_statement_may_2026.csv</td>
+      <td>pioneer_wholesale_statement_may_2026.csv</td>
+      <td></td>
+      <td>4</td>
+      <td>Broker, Statement Ref, Payment Ref, Policy Reference, Client, Txn Date, Currency, Gross, Brokerage, IPT, Amount Due,...</td>
+      <td>none</td>
+      <td>GBP</td>
+      <td>statement_total: TOTAL=200000.00 (row 6)</td>
+      <td>Txn Date mixes slash dates and ISO dates; blank values in Comment</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>harbour_specialty_remittance_apr_2026.xlsx | Summary</td>
+      <td>harbour_specialty_remittance_apr_2026.xlsx</td>
+      <td>Summary</td>
+      <td>0</td>
+      <td></td>
+      <td></td>
+      <td>GBP</td>
+      <td>cover_sheet: Harbour Specialty Ltd= (row 1); cover_sheet: Statement Ref=HRB-APR-2026 (row 2); cover_sheet: Period=Ap...</td>
+      <td>cover or summary sheet; no policy-level rows</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>northshore_broking_remittance_apr_2026.xlsx | Cover</td>
+      <td>northshore_broking_remittance_apr_2026.xlsx</td>
+      <td>Cover</td>
+      <td>0</td>
+      <td></td>
+      <td></td>
+      <td>GBP</td>
+      <td>cover_sheet: Northshore Broking Ltd= (row 1); cover_sheet: Remittance ID=REM-0426-NSB (row 2); cover_sheet: Period=A...</td>
+      <td>cover or summary sheet; no policy-level rows</td>
+    </tr>
+  </tbody>
+</table>
+</div>

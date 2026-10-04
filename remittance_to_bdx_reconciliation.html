@@ -1,0 +1,395 @@
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>broker</th>
+      <th>source_file</th>
+      <th>source_sheet</th>
+      <th>source_row</th>
+      <th>remittance_policy_reference</th>
+      <th>insured_name</th>
+      <th>bdx_record_id</th>
+      <th>bdx_policy_reference</th>
+      <th>remittance_amount</th>
+      <th>bdx_amount</th>
+      <th>currency</th>
+      <th>amount_variance</th>
+      <th>status</th>
+      <th>reason</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Apex Risk Partners Ltd</td>
+      <td>apex_risk_partners_remittance_apr_2026.csv</td>
+      <td></td>
+      <td>6</td>
+      <td>2026/0001</td>
+      <td>Sterling Construction Limited</td>
+      <td>BDX-0001</td>
+      <td>POL-2026-0001</td>
+      <td>8500.0</td>
+      <td>8500.0</td>
+      <td>GBP</td>
+      <td>0.0</td>
+      <td>matched</td>
+      <td>Policy reference matches BDX-0001. insured name agrees; transaction label NB vs New Business.</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Apex Risk Partners Ltd</td>
+      <td>apex_risk_partners_remittance_apr_2026.csv</td>
+      <td></td>
+      <td>7</td>
+      <td>POL0002</td>
+      <td>A.B.C. Technology Ltd</td>
+      <td>BDX-0002</td>
+      <td>POL-2026-0002</td>
+      <td>6375.0</td>
+      <td>6375.0</td>
+      <td>GBP</td>
+      <td>0.0</td>
+      <td>matched</td>
+      <td>Policy reference matches BDX-0002. insured name agrees; transaction label NB vs New Business.</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Apex Risk Partners Ltd</td>
+      <td>apex_risk_partners_remittance_apr_2026.csv</td>
+      <td></td>
+      <td>8</td>
+      <td>POL-2026-0003-CAN</td>
+      <td>Blue Harbour Estates Limited</td>
+      <td>BDX-0003</td>
+      <td>POL-2026-0003</td>
+      <td>-1020.0</td>
+      <td>-1020.0</td>
+      <td>GBP</td>
+      <td>0.0</td>
+      <td>matched</td>
+      <td>Policy reference matches BDX-0003. insured name agrees; transaction label CAN vs Cancellation.</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Apex Risk Partners Ltd</td>
+      <td>apex_risk_partners_remittance_apr_2026.csv</td>
+      <td></td>
+      <td>9</td>
+      <td>POL-2026-0004-ENDT01</td>
+      <td>Greenfield Farms Ltd</td>
+      <td>BDX-0004</td>
+      <td>POL-2026-0004</td>
+      <td>1912.5</td>
+      <td>1912.5</td>
+      <td>GBP</td>
+      <td>0.0</td>
+      <td>matched</td>
+      <td>Policy reference matches BDX-0004. insured name agrees; transaction label MTA vs Endorsement.</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Apex Risk Partners Ltd</td>
+      <td>apex_risk_partners_remittance_apr_2026.csv</td>
+      <td></td>
+      <td>10</td>
+      <td>POL-2026-0005</td>
+      <td>Northshore Energy Services Ltd</td>
+      <td>BDX-0005</td>
+      <td>POL-2026-0005</td>
+      <td>8250.0</td>
+      <td>8500.0</td>
+      <td>GBP</td>
+      <td>-250.0</td>
+      <td>amount difference</td>
+      <td>Policy reference matches BDX-0005. insured name agrees; transaction label NB vs New Business. Remittance 8,250.00 vs BDX 8,500.00 (GBP).</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Apex Risk Partners Ltd</td>
+      <td>apex_risk_partners_remittance_apr_2026.csv</td>
+      <td></td>
+      <td>11</td>
+      <td>POL-2026-0006</td>
+      <td>Thames Logistics Limited</td>
+      <td>BDX-0006</td>
+      <td>POL-2026-0006</td>
+      <td>4250.0</td>
+      <td>4250.0</td>
+      <td>GBP</td>
+      <td>0.0</td>
+      <td>matched</td>
+      <td>Policy reference matches BDX-0006. insured name agrees; transaction label NB vs New Business.</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>Apex Risk Partners Ltd</td>
+      <td>apex_risk_partners_remittance_apr_2026.csv</td>
+      <td></td>
+      <td>12</td>
+      <td>POL-2026-0006</td>
+      <td>Thames Logistics Limited</td>
+      <td></td>
+      <td></td>
+      <td>4250.0</td>
+      <td>NaN</td>
+      <td>GBP</td>
+      <td>NaN</td>
+      <td>duplicate remittance line</td>
+      <td>This policy reference is repeated on the remittance. The BDX record was not used a second time.</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>Continental Coverholders SA</td>
+      <td>continental_coverholders_apr_2026.xlsx</td>
+      <td>EUR Settlement</td>
+      <td>6</td>
+      <td>POL-2026-0401</td>
+      <td>Riviera Foods SARL</td>
+      <td>BDX-0015</td>
+      <td>POL-2026-0401</td>
+      <td>8600.0</td>
+      <td>8600.0</td>
+      <td>GBP</td>
+      <td>0.0</td>
+      <td>matched</td>
+      <td>Policy reference matches BDX-0015. insured name agrees; transaction label NB vs New Business.</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>Continental Coverholders SA</td>
+      <td>continental_coverholders_apr_2026.xlsx</td>
+      <td>EUR Settlement</td>
+      <td>7</td>
+      <td>POL-2026-0402</td>
+      <td>Alpine Components GmbH</td>
+      <td>BDX-0016</td>
+      <td>POL-2026-0402</td>
+      <td>4300.0</td>
+      <td>4300.0</td>
+      <td>GBP</td>
+      <td>0.0</td>
+      <td>matched</td>
+      <td>Policy reference matches BDX-0016. insured name agrees; transaction label NB vs New Business.</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>Continental Coverholders SA</td>
+      <td>continental_coverholders_apr_2026.xlsx</td>
+      <td>EUR Settlement</td>
+      <td>8</td>
+      <td>POL-2026-0403</td>
+      <td>Nordic Fleet AB</td>
+      <td>BDX-0017</td>
+      <td>POL-2026-0403</td>
+      <td>-1032.0</td>
+      <td>-1032.0</td>
+      <td>GBP</td>
+      <td>0.0</td>
+      <td>matched</td>
+      <td>Policy reference matches BDX-0017. insured name agrees; transaction label CAN vs Cancellation.</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>Harbour Specialty Ltd</td>
+      <td>harbour_specialty_remittance_apr_2026.xlsx</td>
+      <td>Items</td>
+      <td>2</td>
+      <td>H-0301</td>
+      <td>Crown Dental Group Limited</td>
+      <td></td>
+      <td></td>
+      <td>12000.0</td>
+      <td>NaN</td>
+      <td>GBP</td>
+      <td>NaN</td>
+      <td>unresolved</td>
+      <td>No BDX policy reference matches H-0301 for this broker.</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>Harbour Specialty Ltd</td>
+      <td>harbour_specialty_remittance_apr_2026.xlsx</td>
+      <td>Items</td>
+      <td>3</td>
+      <td></td>
+      <td>Orange Retail</td>
+      <td></td>
+      <td></td>
+      <td>7200.0</td>
+      <td>NaN</td>
+      <td>GBP</td>
+      <td>NaN</td>
+      <td>unresolved</td>
+      <td>No policy reference. More than one BDX record could fit (BDX-0019 POL-2026-0302 Orange Retail Ltd, BDX-0020 POL-2026-0303 Orange Retail ...</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>Harbour Specialty Ltd</td>
+      <td>harbour_specialty_remittance_apr_2026.xlsx</td>
+      <td>Items</td>
+      <td>4</td>
+      <td>POL-2026-0304</td>
+      <td>Canal Medical Centre Ltd</td>
+      <td>BDX-0021</td>
+      <td>POL-2026-0304</td>
+      <td>17300.0</td>
+      <td>17300.0</td>
+      <td>GBP</td>
+      <td>0.0</td>
+      <td>matched</td>
+      <td>Policy reference matches BDX-0021. insured name agrees; transaction label MTA vs Endorsement.</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>Northshore Broking Ltd</td>
+      <td>northshore_broking_remittance_apr_2026.xlsx</td>
+      <td>Remittance</td>
+      <td>2</td>
+      <td>POL-2026-0101</td>
+      <td>Lime Street Manufacturing Ltd</td>
+      <td>BDX-0007</td>
+      <td>POL-2026-0101</td>
+      <td>17000.0</td>
+      <td>17000.0</td>
+      <td>GBP</td>
+      <td>0.0</td>
+      <td>matched</td>
+      <td>Policy reference matches BDX-0007. insured name agrees.</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>Northshore Broking Ltd</td>
+      <td>northshore_broking_remittance_apr_2026.xlsx</td>
+      <td>Remittance</td>
+      <td>3</td>
+      <td>POL-2026-0102</td>
+      <td>Red Kite Hospitality Limited</td>
+      <td>BDX-0008</td>
+      <td>POL-2026-0102</td>
+      <td>12750.0</td>
+      <td>12750.0</td>
+      <td>GBP</td>
+      <td>0.0</td>
+      <td>matched</td>
+      <td>Policy reference matches BDX-0008. insured name agrees.</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>Northshore Broking Ltd</td>
+      <td>northshore_broking_remittance_apr_2026.xlsx</td>
+      <td>Remittance</td>
+      <td>4</td>
+      <td>POL-2026-0103</td>
+      <td>Cobalt Marine Ltd</td>
+      <td>BDX-0009</td>
+      <td>POL-2026-0103</td>
+      <td>10200.0</td>
+      <td>10200.0</td>
+      <td>GBP</td>
+      <td>0.0</td>
+      <td>matched</td>
+      <td>Policy reference matches BDX-0009. insured name agrees.</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>Northshore Broking Ltd</td>
+      <td>northshore_broking_remittance_apr_2026.xlsx</td>
+      <td>Remittance</td>
+      <td>5</td>
+      <td>POL-2026-0104</td>
+      <td>Oak and Vale Developments Ltd</td>
+      <td>BDX-0010</td>
+      <td>POL-2026-0104</td>
+      <td>10050.0</td>
+      <td>10050.0</td>
+      <td>GBP</td>
+      <td>0.0</td>
+      <td>matched</td>
+      <td>Policy reference matches BDX-0010. insured name agrees.</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>Pioneer Wholesale Brokers</td>
+      <td>pioneer_wholesale_statement_may_2026.csv</td>
+      <td></td>
+      <td>2</td>
+      <td>POL-2026-0201</td>
+      <td>Union Hardware PLC</td>
+      <td>BDX-0011</td>
+      <td>POL-2026-0201</td>
+      <td>85000.0</td>
+      <td>85000.0</td>
+      <td>GBP</td>
+      <td>0.0</td>
+      <td>matched</td>
+      <td>Policy reference matches BDX-0011. insured name agrees.</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>Pioneer Wholesale Brokers</td>
+      <td>pioneer_wholesale_statement_may_2026.csv</td>
+      <td></td>
+      <td>3</td>
+      <td>POL-2026-0202</td>
+      <td>Metro Plant Hire Ltd</td>
+      <td>BDX-0012</td>
+      <td>POL-2026-0202</td>
+      <td>42500.0</td>
+      <td>42500.0</td>
+      <td>GBP</td>
+      <td>0.0</td>
+      <td>matched</td>
+      <td>Policy reference matches BDX-0012. insured name agrees.</td>
+    </tr>
+    <tr>
+      <th>19</th>
+      <td>Pioneer Wholesale Brokers</td>
+      <td>pioneer_wholesale_statement_may_2026.csv</td>
+      <td></td>
+      <td>4</td>
+      <td>POL-2026-0203</td>
+      <td>Keystone Distribution Limited</td>
+      <td>BDX-0013</td>
+      <td>POL-2026-0203</td>
+      <td>51000.0</td>
+      <td>51000.0</td>
+      <td>GBP</td>
+      <td>0.0</td>
+      <td>matched</td>
+      <td>Policy reference matches BDX-0013. insured name agrees.</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>Pioneer Wholesale Brokers</td>
+      <td>pioneer_wholesale_statement_may_2026.csv</td>
+      <td></td>
+      <td>5</td>
+      <td>POL-2026-0204</td>
+      <td>Southbank Storage Ltd</td>
+      <td>BDX-0014</td>
+      <td>POL-2026-0204</td>
+      <td>21500.0</td>
+      <td>21500.0</td>
+      <td>GBP</td>
+      <td>0.0</td>
+      <td>matched</td>
+      <td>Policy reference matches BDX-0014. insured name agrees.</td>
+    </tr>
+  </tbody>
+</table>
+</div>

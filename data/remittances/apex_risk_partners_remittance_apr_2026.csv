@@ -1,0 +1,13 @@
+Broker,Apex Risk Partners Ltd,,,,,,,,,
+Statement ID,APX-APR-2026,,,,,,,,,
+Period,April 2026,,,,,,,,,
+
+Broker,Statement ID,Policy No,Insured,Transaction Type,Accounting Period,Gross Premium,Commission %,Commission Amount,IPT,Net Settlement,Status / Notes
+Apex Risk Partners Ltd,APX-APR-2026,2026/0001,Sterling Construction Limited,NB,2026-04,"GBP 10,000.00",15%,"(1,500.00)","GBP 1,200.00","GBP 8,500.00",
+Apex Risk Partners Ltd,APX-APR-2026,POL0002,A.B.C. Technology Ltd,NB,2026-04,"GBP 7,500.00",15%,"(1,125.00)",GBP 900.00,"GBP 6,375.00",
+Apex Risk Partners Ltd,APX-APR-2026,POL-2026-0003-CAN,Blue Harbour Estates Limited,CAN,2026-04,"(1,200.00)",15%,180.00,(144.00),"(1,020.00)",
+Apex Risk Partners Ltd,APX-APR-2026,POL-2026-0004-ENDT01,Greenfield Farms Ltd,MTA,2026-04,2250,15%,(337.50),270,1912.50,
+Apex Risk Partners Ltd,APX-APR-2026,POL-2026-0005,Northshore Energy Services Ltd,NB,2026-04,"GBP 10,000.00",17.5%,"(1,750.00)","GBP 1,200.00","GBP 8,250.00",
+Apex Risk Partners Ltd,APX-APR-2026,POL-2026-0006,Thames Logistics Limited,NB,2026-04,"GBP 5,000.00",15%,(750.00),GBP 600.00,"GBP 4,250.00",
+Apex Risk Partners Ltd,APX-APR-2026,POL-2026-0006,Thames Logistics Limited,NB,2026-04,"GBP 5,000.00",15%,(750.00),GBP 600.00,"GBP 4,250.00",
+TOTAL,,,,,,,,,,"GBP 32,517.50",
