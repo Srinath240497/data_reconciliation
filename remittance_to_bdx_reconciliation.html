@@ -1,21 +1,44 @@
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Remittance to Premium BDX Reconciliation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 32px;
+            color: #222;
+        }
+        .table-wrap {
+            overflow-x: auto;
+            margin-bottom: 28px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 14px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: #f2f4f7;
+            position: sticky;
+            top: 0;
+        }
+        tr:nth-child(even) {
+            background: #fafafa;
+        }
+    </style>
+</head>
+<body>
+    <h1>Remittance to Premium BDX Reconciliation</h1><h2>Remittance line reconciliation</h2><div class="table-wrap"><table class="dataframe data-table">
   <thead>
     <tr style="text-align: right;">
-      <th></th>
       <th>broker</th>
       <th>source_file</th>
       <th>source_sheet</th>
@@ -34,7 +57,6 @@
   </thead>
   <tbody>
     <tr>
-      <th>0</th>
       <td>Apex Risk Partners Ltd</td>
       <td>apex_risk_partners_remittance_apr_2026.csv</td>
       <td></td>
@@ -51,7 +73,6 @@
       <td>Policy reference matches BDX-0001. insured name agrees; transaction label NB vs New Business.</td>
     </tr>
     <tr>
-      <th>1</th>
       <td>Apex Risk Partners Ltd</td>
       <td>apex_risk_partners_remittance_apr_2026.csv</td>
       <td></td>
@@ -68,7 +89,6 @@
       <td>Policy reference matches BDX-0002. insured name agrees; transaction label NB vs New Business.</td>
     </tr>
     <tr>
-      <th>2</th>
       <td>Apex Risk Partners Ltd</td>
       <td>apex_risk_partners_remittance_apr_2026.csv</td>
       <td></td>
@@ -85,7 +105,6 @@
       <td>Policy reference matches BDX-0003. insured name agrees; transaction label CAN vs Cancellation.</td>
     </tr>
     <tr>
-      <th>3</th>
       <td>Apex Risk Partners Ltd</td>
       <td>apex_risk_partners_remittance_apr_2026.csv</td>
       <td></td>
@@ -102,7 +121,6 @@
       <td>Policy reference matches BDX-0004. insured name agrees; transaction label MTA vs Endorsement.</td>
     </tr>
     <tr>
-      <th>4</th>
       <td>Apex Risk Partners Ltd</td>
       <td>apex_risk_partners_remittance_apr_2026.csv</td>
       <td></td>
@@ -119,7 +137,6 @@
       <td>Policy reference matches BDX-0005. insured name agrees; transaction label NB vs New Business. Remittance 8,250.00 vs BDX 8,500.00 (GBP).</td>
     </tr>
     <tr>
-      <th>5</th>
       <td>Apex Risk Partners Ltd</td>
       <td>apex_risk_partners_remittance_apr_2026.csv</td>
       <td></td>
@@ -136,7 +153,6 @@
       <td>Policy reference matches BDX-0006. insured name agrees; transaction label NB vs New Business.</td>
     </tr>
     <tr>
-      <th>6</th>
       <td>Apex Risk Partners Ltd</td>
       <td>apex_risk_partners_remittance_apr_2026.csv</td>
       <td></td>
@@ -146,14 +162,13 @@
       <td></td>
       <td></td>
       <td>4250.0</td>
-      <td>NaN</td>
+      <td></td>
       <td>GBP</td>
-      <td>NaN</td>
+      <td></td>
       <td>duplicate remittance line</td>
       <td>This policy reference is repeated on the remittance. The BDX record was not used a second time.</td>
     </tr>
     <tr>
-      <th>7</th>
       <td>Continental Coverholders SA</td>
       <td>continental_coverholders_apr_2026.xlsx</td>
       <td>EUR Settlement</td>
@@ -170,7 +185,6 @@
       <td>Policy reference matches BDX-0015. insured name agrees; transaction label NB vs New Business.</td>
     </tr>
     <tr>
-      <th>8</th>
       <td>Continental Coverholders SA</td>
       <td>continental_coverholders_apr_2026.xlsx</td>
       <td>EUR Settlement</td>
@@ -187,7 +201,6 @@
       <td>Policy reference matches BDX-0016. insured name agrees; transaction label NB vs New Business.</td>
     </tr>
     <tr>
-      <th>9</th>
       <td>Continental Coverholders SA</td>
       <td>continental_coverholders_apr_2026.xlsx</td>
       <td>EUR Settlement</td>
@@ -204,7 +217,6 @@
       <td>Policy reference matches BDX-0017. insured name agrees; transaction label CAN vs Cancellation.</td>
     </tr>
     <tr>
-      <th>10</th>
       <td>Harbour Specialty Ltd</td>
       <td>harbour_specialty_remittance_apr_2026.xlsx</td>
       <td>Items</td>
@@ -214,14 +226,13 @@
       <td></td>
       <td></td>
       <td>12000.0</td>
-      <td>NaN</td>
+      <td></td>
       <td>GBP</td>
-      <td>NaN</td>
+      <td></td>
       <td>unresolved</td>
       <td>No BDX policy reference matches H-0301 for this broker.</td>
     </tr>
     <tr>
-      <th>11</th>
       <td>Harbour Specialty Ltd</td>
       <td>harbour_specialty_remittance_apr_2026.xlsx</td>
       <td>Items</td>
@@ -231,14 +242,13 @@
       <td></td>
       <td></td>
       <td>7200.0</td>
-      <td>NaN</td>
+      <td></td>
       <td>GBP</td>
-      <td>NaN</td>
+      <td></td>
       <td>unresolved</td>
-      <td>No policy reference. More than one BDX record could fit (BDX-0019 POL-2026-0302 Orange Retail Ltd, BDX-0020 POL-2026-0303 Orange Retail ...</td>
+      <td>No policy reference. More than one BDX record could fit (BDX-0019 POL-2026-0302 Orange Retail Ltd, BDX-0020 POL-2026-0303 Orange Retail Group Ltd).</td>
     </tr>
     <tr>
-      <th>12</th>
       <td>Harbour Specialty Ltd</td>
       <td>harbour_specialty_remittance_apr_2026.xlsx</td>
       <td>Items</td>
@@ -255,7 +265,6 @@
       <td>Policy reference matches BDX-0021. insured name agrees; transaction label MTA vs Endorsement.</td>
     </tr>
     <tr>
-      <th>13</th>
       <td>Northshore Broking Ltd</td>
       <td>northshore_broking_remittance_apr_2026.xlsx</td>
       <td>Remittance</td>
@@ -272,7 +281,6 @@
       <td>Policy reference matches BDX-0007. insured name agrees.</td>
     </tr>
     <tr>
-      <th>14</th>
       <td>Northshore Broking Ltd</td>
       <td>northshore_broking_remittance_apr_2026.xlsx</td>
       <td>Remittance</td>
@@ -289,7 +297,6 @@
       <td>Policy reference matches BDX-0008. insured name agrees.</td>
     </tr>
     <tr>
-      <th>15</th>
       <td>Northshore Broking Ltd</td>
       <td>northshore_broking_remittance_apr_2026.xlsx</td>
       <td>Remittance</td>
@@ -306,7 +313,6 @@
       <td>Policy reference matches BDX-0009. insured name agrees.</td>
     </tr>
     <tr>
-      <th>16</th>
       <td>Northshore Broking Ltd</td>
       <td>northshore_broking_remittance_apr_2026.xlsx</td>
       <td>Remittance</td>
@@ -323,7 +329,6 @@
       <td>Policy reference matches BDX-0010. insured name agrees.</td>
     </tr>
     <tr>
-      <th>17</th>
       <td>Pioneer Wholesale Brokers</td>
       <td>pioneer_wholesale_statement_may_2026.csv</td>
       <td></td>
@@ -340,7 +345,6 @@
       <td>Policy reference matches BDX-0011. insured name agrees.</td>
     </tr>
     <tr>
-      <th>18</th>
       <td>Pioneer Wholesale Brokers</td>
       <td>pioneer_wholesale_statement_may_2026.csv</td>
       <td></td>
@@ -357,7 +361,6 @@
       <td>Policy reference matches BDX-0012. insured name agrees.</td>
     </tr>
     <tr>
-      <th>19</th>
       <td>Pioneer Wholesale Brokers</td>
       <td>pioneer_wholesale_statement_may_2026.csv</td>
       <td></td>
@@ -374,7 +377,6 @@
       <td>Policy reference matches BDX-0013. insured name agrees.</td>
     </tr>
     <tr>
-      <th>20</th>
       <td>Pioneer Wholesale Brokers</td>
       <td>pioneer_wholesale_statement_may_2026.csv</td>
       <td></td>
@@ -391,5 +393,56 @@
       <td>Policy reference matches BDX-0014. insured name agrees.</td>
     </tr>
   </tbody>
-</table>
-</div>
+</table></div><h2>BDX records without a confirmed remittance match</h2><div class="table-wrap"><table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>bdx_record_id</th>
+      <th>broker</th>
+      <th>bdx_policy_reference</th>
+      <th>insured_name</th>
+      <th>transaction_type</th>
+      <th>settlement_amount</th>
+      <th>currency</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>BDX-0018</td>
+      <td>Harbour Specialty Ltd</td>
+      <td>POL-2026-0301</td>
+      <td>Crown Dental Group Ltd</td>
+      <td>New Business</td>
+      <td>12000.0</td>
+      <td>GBP</td>
+    </tr>
+    <tr>
+      <td>BDX-0019</td>
+      <td>Harbour Specialty Ltd</td>
+      <td>POL-2026-0302</td>
+      <td>Orange Retail Ltd</td>
+      <td>New Business</td>
+      <td>7200.0</td>
+      <td>GBP</td>
+    </tr>
+    <tr>
+      <td>BDX-0020</td>
+      <td>Harbour Specialty Ltd</td>
+      <td>POL-2026-0303</td>
+      <td>Orange Retail Group Ltd</td>
+      <td>New Business</td>
+      <td>7200.0</td>
+      <td>GBP</td>
+    </tr>
+    <tr>
+      <td>BDX-0022</td>
+      <td>Apex Risk Partners Ltd</td>
+      <td>POL-2026-0007</td>
+      <td>Meadow Labs Ltd</td>
+      <td>New Business</td>
+      <td>12800.0</td>
+      <td>GBP</td>
+    </tr>
+  </tbody>
+</table></div>
+</body>
+</html>

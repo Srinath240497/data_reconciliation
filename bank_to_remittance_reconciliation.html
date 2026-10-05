@@ -1,21 +1,44 @@
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bank to Remittance Reconciliation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 32px;
+            color: #222;
+        }
+        .table-wrap {
+            overflow-x: auto;
+            margin-bottom: 28px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 14px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: #f2f4f7;
+            position: sticky;
+            top: 0;
+        }
+        tr:nth-child(even) {
+            background: #fafafa;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bank to Remittance Reconciliation</h1><h2>Statement reconciliation</h2><div class="table-wrap"><table class="dataframe data-table">
   <thead>
     <tr style="text-align: right;">
-      <th></th>
       <th>broker</th>
       <th>statement_reference</th>
       <th>bank_transaction_ids</th>
@@ -33,7 +56,6 @@
   </thead>
   <tbody>
     <tr>
-      <th>0</th>
       <td>Apex Risk Partners Ltd</td>
       <td>APX-APR-2026</td>
       <td>BANK-0001</td>
@@ -49,7 +71,6 @@
       <td>APEX RISK PARTNERS APRIL STATEMENT APX-APR-2026</td>
     </tr>
     <tr>
-      <th>1</th>
       <td>Continental Coverholders SA</td>
       <td>CON-APR-2026</td>
       <td>BANK-0005</td>
@@ -59,13 +80,12 @@
       <td>11867.8</td>
       <td>-0.2</td>
       <td>amount difference</td>
-      <td>name CONTINENTAL. Bank received 11,867.80 against statement total 11,868.00 (variance -0.20). Bank narrative: CONTINENTAL COVERHOLDERS APRIL SETTLEMENT EUR ...</td>
+      <td>name CONTINENTAL. Bank received 11,867.80 against statement total 11,868.00 (variance -0.20). Bank narrative: CONTINENTAL COVERHOLDERS APRIL SETTLEMENT EUR FX 0.8600.</td>
       <td>continental_coverholders_apr_2026.xlsx | EUR Settlement</td>
       <td>9</td>
       <td>CONTINENTAL COVERHOLDERS APRIL SETTLEMENT EUR FX 0.8600</td>
     </tr>
     <tr>
-      <th>2</th>
       <td>Harbour Specialty Ltd</td>
       <td>HRB-APR-2026</td>
       <td></td>
@@ -81,7 +101,6 @@
       <td></td>
     </tr>
     <tr>
-      <th>3</th>
       <td>Northshore Broking Ltd</td>
       <td>REM-0426-NSB</td>
       <td>BANK-0002</td>
@@ -91,13 +110,12 @@
       <td>49990.0</td>
       <td>-10.0</td>
       <td>amount difference</td>
-      <td>reference REM-0426-NSB; name NORTHSHORE. Bank received 49,990.00 against statement total 50,000.00 (variance -10.00). Bank narrative: NORTHSHORE BROKING LTD...</td>
+      <td>reference REM-0426-NSB; name NORTHSHORE. Bank received 49,990.00 against statement total 50,000.00 (variance -10.00). Bank narrative: NORTHSHORE BROKING LTD REM-0426-NSB OUR CHG GBP10 NET.</td>
       <td>northshore_broking_remittance_apr_2026.xlsx | Cover</td>
       <td>4</td>
       <td>NORTHSHORE BROKING LTD REM-0426-NSB OUR CHG GBP10 NET</td>
     </tr>
     <tr>
-      <th>4</th>
       <td>Pioneer Wholesale Brokers</td>
       <td>PIO-MAY26</td>
       <td>BANK-0003, BANK-0004</td>
@@ -113,15 +131,14 @@
       <td>PIONEER WHOLESALE REM PIO-MAY26 A | PIONEER WHOLESALE REM PIO-MAY26 B</td>
     </tr>
     <tr>
-      <th>5</th>
       <td>UNKNOWN BROKER SERVICES</td>
       <td></td>
       <td>BANK-0006</td>
       <td>2026-05-07</td>
-      <td>NaN</td>
+      <td></td>
       <td>GBP</td>
       <td>28750.0</td>
-      <td>NaN</td>
+      <td></td>
       <td>unmatched bank credit</td>
       <td>no broker name or statement reference in the bank fields. Narrative: UBS CLIENT MONEY MAY PREMIUMS.</td>
       <td>bank_transactions_may_2026.csv</td>
@@ -129,5 +146,88 @@
       <td>UBS CLIENT MONEY MAY PREMIUMS</td>
     </tr>
   </tbody>
-</table>
-</div>
+</table></div><h2>Bank receipt details</h2><div class="table-wrap"><table class="dataframe data-table">
+  <thead>
+    <tr style="text-align: right;">
+      <th>transaction_id</th>
+      <th>receipt_date</th>
+      <th>currency</th>
+      <th>amount</th>
+      <th>counterparty_name</th>
+      <th>bank_reference</th>
+      <th>narrative</th>
+      <th>statement_reference</th>
+      <th>link</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>BANK-0001</td>
+      <td>2026-05-03</td>
+      <td>GBP</td>
+      <td>32517.5</td>
+      <td>APEX RISK PARTNERS LTD</td>
+      <td>FP 483920</td>
+      <td>APEX RISK PARTNERS APRIL STATEMENT APX-APR-2026</td>
+      <td>APX-APR-2026</td>
+      <td>reference APX-APR-2026; name APEX</td>
+    </tr>
+    <tr>
+      <td>BANK-0002</td>
+      <td>2026-05-03</td>
+      <td>GBP</td>
+      <td>49990.0</td>
+      <td>NORTHSHORE BROKING LTD</td>
+      <td>CHAPS 809144</td>
+      <td>NORTHSHORE BROKING LTD REM-0426-NSB OUR CHG GBP10 NET</td>
+      <td>REM-0426-NSB</td>
+      <td>reference REM-0426-NSB; name NORTHSHORE</td>
+    </tr>
+    <tr>
+      <td>BANK-0003</td>
+      <td>2026-05-04</td>
+      <td>GBP</td>
+      <td>150000.0</td>
+      <td>PIONEER WHOLESALE BROKERS</td>
+      <td>CHAPS 881204</td>
+      <td>PIONEER WHOLESALE REM PIO-MAY26 A</td>
+      <td>PIO-MAY26</td>
+      <td>reference PIO-MAY26; name PIONEER</td>
+    </tr>
+    <tr>
+      <td>BANK-0004</td>
+      <td>2026-05-05</td>
+      <td>GBP</td>
+      <td>50000.0</td>
+      <td>PIONEER WHOLESALE BROKERS</td>
+      <td>CHAPS 881205</td>
+      <td>PIONEER WHOLESALE REM PIO-MAY26 B</td>
+      <td>PIO-MAY26</td>
+      <td>reference PIO-MAY26; name PIONEER</td>
+    </tr>
+    <tr>
+      <td>BANK-0005</td>
+      <td>2026-05-06</td>
+      <td>GBP</td>
+      <td>11867.8</td>
+      <td>CONTINENTAL COVERHOLDERS SA</td>
+      <td>SEPA 372994</td>
+      <td>CONTINENTAL COVERHOLDERS APRIL SETTLEMENT EUR FX 0.8600</td>
+      <td>CON-APR-2026</td>
+      <td>name CONTINENTAL</td>
+    </tr>
+    <tr>
+      <td>BANK-0006</td>
+      <td>2026-05-07</td>
+      <td>GBP</td>
+      <td>28750.0</td>
+      <td>UNKNOWN BROKER SERVICES</td>
+      <td>FP 992310</td>
+      <td>UBS CLIENT MONEY MAY PREMIUMS</td>
+      <td></td>
+      <td>no broker name or statement reference in the bank fields</td>
+    </tr>
+  </tbody>
+</table></div>
+</body>
+</html>

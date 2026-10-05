@@ -1,6 +1,75 @@
 from pathlib import Path
 import pandas as pd
 
+# Save the HTML files beside execute.py, regardless of VS Code's working folder.
+OUTPUT_DIR = Path(__file__).resolve().parent
+
+
+def save_html_page(filename, title, sections):
+    """Save one or more DataFrames as a styled HTML page."""
+    parts = [f"<h1>{title}</h1>"]
+
+    for heading, dataframe in sections:
+        parts.append(f"<h2>{heading}</h2>")
+
+        if dataframe is None or dataframe.empty:
+            parts.append("<p>No rows to display.</p>")
+        else:
+            table = dataframe.to_html(
+                index=False,
+                border=0,
+                classes="data-table",
+                escape=True,
+                na_rep="",
+            )
+            parts.append(f'<div class="table-wrap">{table}</div>')
+
+    page = f"""<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{title}</title>
+    <style>
+        body {{
+            font-family: Arial, sans-serif;
+            margin: 32px;
+            color: #222;
+        }}
+        .table-wrap {{
+            overflow-x: auto;
+            margin-bottom: 28px;
+        }}
+        table {{
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 14px;
+        }}
+        th, td {{
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            vertical-align: top;
+        }}
+        th {{
+            background: #f2f4f7;
+            position: sticky;
+            top: 0;
+        }}
+        tr:nth-child(even) {{
+            background: #fafafa;
+        }}
+    </style>
+</head>
+<body>
+    {''.join(parts)}
+</body>
+</html>
+"""
+    output_path = OUTPUT_DIR / filename
+    output_path.write_text(page, encoding="utf-8")
+    print(f"Saved: {output_path}")
+
 BASE = Path.cwd()
 DATA_CANDIDATES = (BASE / "data", BASE / "candidate_pack" / "data")
 DATA = next(
@@ -233,14 +302,14 @@ PROVENANCE = ("source_file", "source_sheet", "source_row")
 
 KEY_FIELDS = {
     "bank_transactions_may_2026.csv": [
-        "transaction_id", "booking_date", "currency", "credit_amount", "counterparty_name", "narrative",
+        "transaction_id", "booking_date", "currency", "credit_amount", "debit_amount", "counterparty_name", "narrative",
     ],
     "premium_bdx_april_2026.csv": [
         "bdx_record_id", "broker_name", "policy_reference", "original_currency",
         "net_due_to_mga_original_ccy", "settlement_amount_gbp",
     ],
     "apex_risk_partners_remittance_apr_2026.csv": [
-        "Policy No", "Insured", "Gross Premium", "Net Settlement",
+        "Policy No", "Insured", "Gross Premium", "Net Settlement", "Transaction Type", "Commission Amount",
     ],
     "pioneer_wholesale_statement_may_2026.csv": [
         "Policy Reference", "Client", "Currency", "Amount Due",
@@ -514,556 +583,582 @@ print(source_profile.to_string(index=False))
 print(source_controls.to_string(index=False))
 # source_controls
 
-# import re
-
-# ROUNDING_TOLERANCE = 0.01  # GBP; differences above one penny are reported
-
-# NAME_STOPWORDS = {
-#     "LTD", "LIMITED", "PLC", "SA", "LLP", "INC",
-#     "BROKER", "BROKERS", "BROKING", "WHOLESALE", "PARTNERS",
-#     "SPECIALTY", "COVERHOLDERS", "RISK", "SERVICES", "AND", "THE",
-# }
-# REF_LABELS = {"statement id", "statement ref", "remittance id"}
-# TOTAL_LABELS = {"stated total", "statement total"}
-# BROKER_LABELS = {"broker"}
-# CCY_LABELS = {"settlement ccy", "currency"}
-
-
-# def parse_amount(text):
-#     """Parse a stated amount, including a currency prefix and thousands separators."""
-#     if text is None or str(text).strip() == "":
-#         return None
-#     raw = str(text).strip()
-#     negative = raw.startswith("(") and raw.endswith(")")
-#     cleaned = raw.strip("()")
-#     cleaned = re.sub(r"\b[A-Z]{3}\b", "", cleaned)
-#     cleaned = cleaned.replace(",", "").strip()
-#     if cleaned in {"", "-"}:
-#         return None
-#     value = float(cleaned)
-#     return -value if negative else value
-
-
-# def currency_of(text):
-#     if text is None:
-#         return ""
-#     match = re.search(r"\b(GBP|EUR|USD)\b", str(text).upper())
-#     return match.group(1) if match else ""
-
-
-# def name_tokens(broker):
-#     tokens = re.findall(r"[A-Z0-9]+", str(broker).upper())
-#     return [token for token in tokens if token not in NAME_STOPWORDS and len(token) >= 4]
-
-
-# def text_has_token(text, token):
-#     return re.search(rf"\b{re.escape(token)}\b", text) is not None
-
-
-# def file_controls(filename):
-#     return source_controls[source_controls["source_file"].eq(filename)]
-
-
-# def statement_for(filename, frames):
-#     controls = file_controls(filename)
-#     detail = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
-
-#     broker = ""
-#     statement_ref = ""
-#     currency = ""
-#     stated_total = None
-#     stated_total_text = ""
-#     total_file = filename
-#     total_sheet = ""
-#     total_row = ""
-
-#     for row in controls.itertuples(index=False):
-#         label = str(row.label).strip()
-#         label_key = label.casefold()
-#         value = str(row.value).strip()
-#         if label_key in BROKER_LABELS and value:
-#             broker = value
-#         elif label_key in REF_LABELS and value and not statement_ref:
-#             statement_ref = value
-#         elif label_key in CCY_LABELS and value:
-#             currency = currency_of(value) or value.upper()
-#         elif label_key in TOTAL_LABELS and value:
-#             stated_total = parse_amount(value)
-#             stated_total_text = value
-#             currency = currency or currency_of(value)
-#             total_sheet = row.source_sheet
-#             total_row = row.source_row
-#         elif row.control_type == "statement_total" and stated_total is None:
-#             stated_total = parse_amount(value)
-#             stated_total_text = value
-#             currency = currency or currency_of(value)
-#             total_sheet = row.source_sheet
-#             total_row = row.source_row
-#         elif row.control_type == "cover_sheet" and not value and not broker:
-#             broker = label
-
-#     if not detail.empty:
-#         columns = {column.casefold(): column for column in detail.columns}
-#         if not broker and "broker" in columns:
-#             broker = next(value for value in detail[columns["broker"]] if value)
-#         if not statement_ref:
-#             for key in ("statement id", "statement ref", "remittance id"):
-#                 if key in columns and detail[columns[key]].ne("").any():
-#                     statement_ref = next(value for value in detail[columns[key]] if value)
-#                     break
-#         if not currency and "currency" in columns:
-#             codes = sorted({value for value in detail[columns["currency"]] if currency_of(value) or len(value) == 3})
-#             if len(codes) == 1:
-#                 currency = currency_of(codes[0]) or codes[0].upper()
-
-#     refs = []
-#     for ref in [statement_ref]:
-#         if ref and ref not in refs:
-#             refs.append(ref)
-#     if not detail.empty:
-#         for key in ("payment ref", "statement id", "statement ref", "remittance id"):
-#             column = {name.casefold(): name for name in detail.columns}.get(key)
-#             if column:
-#                 for value in detail[column]:
-#                     if value and value not in refs:
-#                         refs.append(value)
-
-#     return {
-#         "broker": broker,
-#         "statement_reference": statement_ref,
-#         "match_refs": refs,
-#         "name_tokens": name_tokens(broker),
-#         "currency": currency or "GBP",
-#         "statement_total": stated_total,
-#         "statement_total_text": stated_total_text,
-#         "source_file": total_file,
-#         "source_sheet": total_sheet,
-#         "source_row": total_row,
-#     }
-
-
-# frames_by_file = {}
-# for dataset_name, frame in remittance_details.items():
-#     filename = dataset_name.split(" | ", 1)[0]
-#     frames_by_file.setdefault(filename, []).append(frame)
-
-# statements = [statement_for(filename, frames) for filename, frames in frames_by_file.items()]
-# statements = [row for row in statements if row["statement_reference"] or row["statement_total"] is not None]
-
-# bank = bank_transactions.copy()
-# bank["credit"] = bank["credit_amount"].map(parse_amount)
-# bank["debit"] = bank["debit_amount"].map(parse_amount)
-# credits = bank[bank["credit"].notna() & (bank["credit"] > 0)].copy()
-# excluded_debits = bank[bank["debit"].notna() & (bank["debit"] > 0) & bank["credit"].isna()]
-
-
-# def bank_blob(row):
-#     return " ".join(str(getattr(row, column)) for column in ("counterparty_name", "bank_reference", "narrative")).upper()
-
-
-# def matching_statements(row):
-#     blob = bank_blob(row)
-#     hits = []
-#     for statement in statements:
-#         ref_hits = [ref for ref in statement["match_refs"] if ref.upper() in blob]
-#         token_hits = [token for token in statement["name_tokens"] if text_has_token(blob, token)]
-#         if ref_hits or token_hits:
-#             hits.append((statement, ref_hits, token_hits))
-#     return hits
-
-
-# assignments = []
-# unresolved_credits = []
-# for row in credits.itertuples(index=False):
-#     hits = matching_statements(row)
-#     receipt = {
-#         "transaction_id": row.transaction_id,
-#         "receipt_date": row.value_date,
-#         "currency": row.currency,
-#         "amount": row.credit,
-#         "counterparty_name": row.counterparty_name,
-#         "bank_reference": row.bank_reference,
-#         "narrative": row.narrative,
-#     }
-#     if len(hits) == 1:
-#         statement, ref_hits, token_hits = hits[0]
-#         receipt["statement_reference"] = statement["statement_reference"]
-#         receipt["link"] = "; ".join(
-#             ([f"reference {', '.join(ref_hits)}"] if ref_hits else [])
-#             + ([f"name {', '.join(token_hits)}"] if token_hits else [])
-#         )
-#         if row.currency != statement["currency"]:
-#             receipt["link"] += f"; currency {row.currency} vs statement {statement['currency']}"
-#         assignments.append(receipt)
-#     else:
-#         receipt["statement_reference"] = ""
-#         if len(hits) > 1:
-#             receipt["link"] = "more than one statement shares this name or reference; left unmatched"
-#         else:
-#             receipt["link"] = "no broker name or statement reference in the bank fields"
-#         unresolved_credits.append(receipt)
-
-# assigned = pd.DataFrame(assignments)
-# results = []
-
-# for statement in statements:
-#     linked = (
-#         assigned[assigned["statement_reference"].eq(statement["statement_reference"])]
-#         if not assigned.empty
-#         else assigned
-#     )
-#     received = float(linked["amount"].sum()) if not linked.empty else 0.0
-#     total = statement["statement_total"]
-#     variance = None if total is None else round(received - total, 2)
-#     ids = ", ".join(linked["transaction_id"]) if not linked.empty else ""
-#     dates = ", ".join(linked["receipt_date"]) if not linked.empty else ""
-#     narratives = " | ".join(linked["narrative"]) if not linked.empty else ""
-#     links = "; ".join(dict.fromkeys(linked["link"])) if not linked.empty else ""
-
-#     if linked.empty:
-#         status = "no identified bank receipt"
-#         reason = "No bank credit names this broker or quotes this statement reference."
-#     elif variance is not None and abs(variance) <= ROUNDING_TOLERANCE:
-#         status = "matched"
-#         reason = f"{links}. Combined receipts {received:,.2f} equal the statement total."
-#     else:
-#         status = "amount difference"
-#         reason = (
-#             f"{links}. Bank received {received:,.2f} against statement total {total:,.2f} "
-#             f"(variance {variance:,.2f})."
-#         )
-#         if narratives:
-#             reason += f" Bank narrative: {narratives}."
-
-#     source = statement["source_file"]
-#     if statement["source_sheet"]:
-#         source = f"{source} | {statement['source_sheet']}"
-
-#     results.append({
-#         "broker": statement["broker"],
-#         "statement_reference": statement["statement_reference"],
-#         "bank_transaction_ids": ids,
-#         "receipt_dates": dates,
-#         "statement_total": total,
-#         "currency": statement["currency"],
-#         "bank_amount_received": round(received, 2),
-#         "variance": variance,
-#         "status": status,
-#         "reason": reason,
-#         "source_file_sheet": source,
-#         "source_row": statement["source_row"],
-#         "bank_narratives": narratives,
-#     })
-
-# for receipt in unresolved_credits:
-#     results.append({
-#         "broker": receipt["counterparty_name"],
-#         "statement_reference": "",
-#         "bank_transaction_ids": receipt["transaction_id"],
-#         "receipt_dates": receipt["receipt_date"],
-#         "statement_total": None,
-#         "currency": receipt["currency"],
-#         "bank_amount_received": round(receipt["amount"], 2),
-#         "variance": None,
-#         "status": "unmatched bank credit",
-#         "reason": f"{receipt['link']}. Narrative: {receipt['narrative']}.",
-#         "source_file_sheet": "bank_transactions_may_2026.csv",
-#         "source_row": "",
-#         "bank_narratives": receipt["narrative"],
-#     })
-
-# bank_to_remittance = pd.DataFrame(results)
-# bank_receipt_lines = pd.DataFrame(assignments + unresolved_credits)
-
-# pd.set_option("display.max_colwidth", 160)
-# pd.set_option("display.max_rows", 50)
-# # display(bank_to_remittance)
-# # display(bank_receipt_lines)
-# print(bank_to_remittance.to_string(index=False))
-# print(bank_receipt_lines.to_string(index=False))
-# print(
-#     f"Rounding tolerance: {ROUNDING_TOLERANCE:.2f}. "
-#     f"Debits excluded from premium receipts: "
-#     + ", ".join(
-#         f"{row.transaction_id} {row.currency} {row.debit:.2f} ({row.narrative})"
-#         for row in excluded_debits.itertuples(index=False)
-#     )
-# )
-
-# import re
-
-# PENNY_TOLERANCE = 0.01
-
-# TXN_GROUPS = {
-#     "NB": "new business",
-#     "NEW BUSINESS": "new business",
-#     "CAN": "cancellation",
-#     "CANCELLATION": "cancellation",
-#     "MTA": "adjustment",
-#     "END": "adjustment",
-#     "ENDORSEMENT": "adjustment",
-# }
-
-
-# def parse_money(text):
-#     if text is None or str(text).strip() == "":
-#         return None
-#     raw = str(text).strip()
-#     negative = raw.startswith("(") and raw.endswith(")")
-#     cleaned = re.sub(r"\b[A-Z]{3}\b", "", raw.strip("()"))
-#     cleaned = cleaned.replace(",", "").strip()
-#     if cleaned in {"", "-"}:
-#         return None
-#     value = float(cleaned)
-#     return -value if negative else value
-
-
-# def column(frame, *names):
-#     lookup = {name.casefold(): name for name in frame.columns}
-#     for name in names:
-#         if name.casefold() in lookup:
-#             return lookup[name.casefold()]
-#     return None
-
-
-# def first_value(frame, *names):
-#     found = column(frame, *names)
-#     if found is None:
-#         return ""
-#     for value in frame[found]:
-#         if str(value).strip():
-#             return str(value).strip()
-#     return ""
-
-
-# def broker_for(frame):
-#     on_row = first_value(frame, "Broker")
-#     if on_row:
-#         return on_row
-#     filename = frame["source_file"].iloc[0]
-#     controls = source_controls[source_controls["source_file"].eq(filename)]
-#     labelled = controls[controls["label"].str.casefold().eq("broker")]
-#     if not labelled.empty and str(labelled.iloc[0]["value"]).strip():
-#         return str(labelled.iloc[0]["value"]).strip()
-#     cover = controls[controls["control_type"].eq("cover_sheet") & controls["value"].eq("")]
-#     if not cover.empty:
-#         return str(cover.iloc[0]["label"]).strip()
-#     return ""
-
-
-# def broker_key(name):
-#     text = re.sub(r"[^A-Z0-9 ]", " ", str(name).upper())
-#     text = re.sub(r"\b(LTD|LIMITED|PLC|SA|LLP)\b", " ", text)
-#     return re.sub(r"\s+", " ", text).strip()
-
-
-# def policy_key(reference):
-#     """Comparable policy key. Does not replace the reference stored on the row."""
-#     text = str(reference).upper().strip()
-#     if not text:
-#         return ""
-#     text = re.sub(r"[-/\s]*(CAN|ENDT\d*|MTA)$", "", text)
-#     text = re.sub(r"\s+", "", text)
-#     year_only = re.fullmatch(r"(\d{4})[/-](\d+)", text)
-#     if year_only:
-#         text = f"POL-{year_only.group(1)}-{int(year_only.group(2)):04d}"
-#     short_pol = re.fullmatch(r"POL(\d{1,4})", text)
-#     if short_pol:
-#         text = f"POL-2026-{int(short_pol.group(1)):04d}"
-#     return re.sub(r"[^A-Z0-9]", "", text)
-
-
-# def name_key(name):
-#     text = str(name).upper().replace("&", " AND ")
-#     text = re.sub(r"\b(LTD|LIMITED|PLC|SA|LLP|GROUP)\b", " ", text)
-#     return re.sub(r"[^A-Z0-9]", "", text)
-
-
-# def txn_group(label):
-#     return TXN_GROUPS.get(str(label).upper().strip(), "")
-
-
-# def money_fields(frame):
-#     if column(frame, "GBP Settlement Amount"):
-#         return column(frame, "GBP Settlement Amount"), "GBP"
-#     for name in ("Net Settlement", "Amount Due MGA", "Amount Due", "Net Due"):
-#         found = column(frame, name)
-#         if found:
-#             return found, ""
-#     return None, ""
-
-
-# lines = []
-# for dataset_name, frame in remittance_details.items():
-#     amount_column, forced_currency = money_fields(frame)
-#     policy_column = column(frame, "Policy No", "Policy Reference", "UW Ref", "Policy", "Policy / Risk Ref")
-#     insured_column = column(frame, "Insured", "Insured Name", "Client", "Assured")
-#     txn_column = column(frame, "Transaction Type", "Txn Type")
-#     currency_column = column(frame, "Currency")
-#     broker = broker_for(frame)
-#     for row in frame.to_dict("records"):
-#         amount_text = row.get(amount_column, "") if amount_column else ""
-#         currency = forced_currency or (row.get(currency_column, "") if currency_column else "") or "GBP"
-#         policy_reference = row.get(policy_column, "") if policy_column else ""
-#         lines.append({
-#             "broker": broker,
-#             "broker_key": broker_key(broker),
-#             "source_file": row["source_file"],
-#             "source_sheet": row["source_sheet"],
-#             "source_row": row["source_row"],
-#             "policy_reference": policy_reference,
-#             "policy_key": policy_key(policy_reference),
-#             "insured_name": row.get(insured_column, "") if insured_column else "",
-#             "txn_type": row.get(txn_column, "") if txn_column else "",
-#             "amount": parse_money(amount_text),
-#             "currency": currency,
-#         })
-
-# bdx_rows = []
-# for row in premium_bdx.itertuples(index=False):
-#     bdx_rows.append({
-#         "bdx_record_id": row.bdx_record_id,
-#         "broker": row.broker_name,
-#         "broker_key": broker_key(row.broker_name),
-#         "policy_reference": row.policy_reference,
-#         "policy_key": policy_key(row.policy_reference),
-#         "insured_name": row.insured_name,
-#         "txn_type": row.transaction_type,
-#         "amount": parse_money(row.settlement_amount_gbp),
-#         "currency": row.settlement_currency,
-#         "used": False,
-#     })
-
-
-# def describe_checks(line, match):
-#     notes = []
-#     if name_key(line["insured_name"]) == name_key(match["insured_name"]):
-#         notes.append("insured name agrees")
-#     else:
-#         notes.append(f"insured name differs ({line['insured_name']} vs {match['insured_name']})")
-#     if line["txn_type"] and match["txn_type"] and line["txn_type"].upper() != match["txn_type"].upper():
-#         if txn_group(line["txn_type"]) and txn_group(line["txn_type"]) == txn_group(match["txn_type"]):
-#             notes.append(f"transaction label {line['txn_type']} vs {match['txn_type']}")
-#         else:
-#             notes.append(f"transaction type {line['txn_type']} vs {match['txn_type']}")
-#     if line["currency"] != match["currency"]:
-#         notes.append(f"currency {line['currency']} vs {match['currency']}")
-#     return "; ".join(notes)
-
-
-# results = []
-# seen_policy = set()
-# for line in lines:
-#     same_broker = [row for row in bdx_rows if row["broker_key"] == line["broker_key"]]
-#     policy_hits = [row for row in same_broker if line["policy_key"] and row["policy_key"] == line["policy_key"]]
-#     status = ""
-#     reason = ""
-#     match = None
-
-#     duplicate = bool(line["policy_key"]) and (line["broker_key"], line["policy_key"]) in seen_policy
-#     if line["policy_key"]:
-#         seen_policy.add((line["broker_key"], line["policy_key"]))
-
-#     if duplicate:
-#         status = "duplicate remittance line"
-#         reason = "This policy reference is repeated on the remittance. The BDX record was not used a second time."
-#     elif len(policy_hits) == 1:
-#         match = policy_hits[0]
-#         if match["used"]:
-#             status = "duplicate remittance line"
-#             reason = f"{match['bdx_record_id']} is already linked to another remittance line."
-#             match = None
-#         else:
-#             match["used"] = True
-#     elif len(policy_hits) > 1:
-#         status = "unresolved"
-#         ids = ", ".join(row["bdx_record_id"] for row in policy_hits)
-#         reason = f"More than one BDX record shares this policy reference ({ids})."
-#     elif not line["policy_key"]:
-#         name_hits = [
-#             row for row in same_broker
-#             if not row["used"]
-#             and name_key(line["insured_name"])
-#             and name_key(row["insured_name"]) == name_key(line["insured_name"])
-#         ]
-#         loose_hits = [
-#             row for row in same_broker
-#             if not row["used"]
-#             and name_key(line["insured_name"])
-#             and name_key(line["insured_name"]) in name_key(row["insured_name"])
-#         ]
-#         candidates = name_hits or loose_hits
-#         status = "unresolved"
-#         if len(candidates) > 1:
-#             ids = ", ".join(
-#                 f"{row['bdx_record_id']} {row['policy_reference']} {row['insured_name']}" for row in candidates
-#             )
-#             reason = f"No policy reference. More than one BDX record could fit ({ids})."
-#         elif len(candidates) == 1:
-#             reason = (
-#                 f"No policy reference. Only {candidates[0]['bdx_record_id']} has a similar insured name, "
-#                 "which is not enough to assign it."
-#             )
-#         else:
-#             reason = "No policy reference and no single BDX insured name to compare."
-#     else:
-#         status = "unresolved"
-#         reason = f"No BDX policy reference matches {line['policy_reference']} for this broker."
-
-#     variance = None
-#     if match is not None:
-#         variance = (
-#             None if line["amount"] is None or match["amount"] is None
-#             else round(line["amount"] - match["amount"], 2)
-#         )
-#         checks = describe_checks(line, match)
-#         if variance is not None and abs(variance) <= PENNY_TOLERANCE and line["currency"] == match["currency"]:
-#             status = "matched"
-#             reason = f"Policy reference matches {match['bdx_record_id']}. {checks}."
-#         else:
-#             status = "amount difference"
-#             reason = (
-#                 f"Policy reference matches {match['bdx_record_id']}. {checks}. "
-#                 f"Remittance {line['amount']:,.2f} vs BDX {match['amount']:,.2f} ({line['currency']})."
-#             )
-
-#     results.append({
-#         "broker": line["broker"],
-#         "source_file": line["source_file"],
-#         "source_sheet": line["source_sheet"],
-#         "source_row": line["source_row"],
-#         "remittance_policy_reference": line["policy_reference"],
-#         "insured_name": line["insured_name"],
-#         "bdx_record_id": match["bdx_record_id"] if match else "",
-#         "bdx_policy_reference": match["policy_reference"] if match else "",
-#         "remittance_amount": line["amount"],
-#         "bdx_amount": match["amount"] if match else None,
-#         "currency": line["currency"],
-#         "amount_variance": variance,
-#         "status": status,
-#         "reason": reason,
-#     })
-
-# remittance_to_bdx = pd.DataFrame(results)
-# bdx_without_remittance = pd.DataFrame([
-#     {
-#         "bdx_record_id": row["bdx_record_id"],
-#         "broker": row["broker"],
-#         "bdx_policy_reference": row["policy_reference"],
-#         "insured_name": row["insured_name"],
-#         "transaction_type": row["txn_type"],
-#         "settlement_amount": row["amount"],
-#         "currency": row["currency"],
-#     }
-#     for row in bdx_rows
-#     if not row["used"]
-# ])
-
-# pd.set_option("display.max_colwidth", 140)
-# pd.set_option("display.max_rows", 40)
-# # display(remittance_to_bdx)
-# print(f"Rounding tolerance: {PENNY_TOLERANCE:.2f}. Variance is remittance amount minus BDX settlement amount.")
-# print("BDX records with no remittance match:")
-# # display(bdx_without_remittance)
-# print(remittance_to_bdx.to_string(index=False))
-# print(bdx_without_remittance.to_string(index=False))
+import re
+
+ROUNDING_TOLERANCE = 0.01  # GBP; differences above one penny are reported
+
+NAME_STOPWORDS = {
+    "LTD", "LIMITED", "PLC", "SA", "LLP", "INC",
+    "BROKER", "BROKERS", "BROKING", "WHOLESALE", "PARTNERS",
+    "SPECIALTY", "COVERHOLDERS", "RISK", "SERVICES", "AND", "THE",
+}
+REF_LABELS = {"statement id", "statement ref", "remittance id"}
+TOTAL_LABELS = {"stated total", "statement total"}
+BROKER_LABELS = {"broker"}
+CCY_LABELS = {"settlement ccy", "currency"}
+
+
+def parse_amount(text):
+    """Parse a stated amount, including a currency prefix and thousands separators."""
+    if text is None or str(text).strip() == "":
+        return None
+    raw = str(text).strip()
+    negative = raw.startswith("(") and raw.endswith(")")
+    cleaned = raw.strip("()")
+    cleaned = re.sub(r"\b[A-Z]{3}\b", "", cleaned)
+    cleaned = cleaned.replace(",", "").strip()
+    if cleaned in {"", "-"}:
+        return None
+    value = float(cleaned)
+    return -value if negative else value
+
+
+def currency_of(text):
+    if text is None:
+        return ""
+    match = re.search(r"\b(GBP|EUR|USD)\b", str(text).upper())
+    return match.group(1) if match else ""
+
+
+def name_tokens(broker):
+    tokens = re.findall(r"[A-Z0-9]+", str(broker).upper())
+    return [token for token in tokens if token not in NAME_STOPWORDS and len(token) >= 4]
+
+
+def text_has_token(text, token):
+    return re.search(rf"\b{re.escape(token)}\b", text) is not None
+
+
+def file_controls(filename):
+    return source_controls[source_controls["source_file"].eq(filename)]
+
+
+def statement_for(filename, frames):
+    controls = file_controls(filename)
+    detail = pd.concat(frames, ignore_index=True) if frames else pd.DataFrame()
+
+    broker = ""
+    statement_ref = ""
+    currency = ""
+    stated_total = None
+    stated_total_text = ""
+    total_file = filename
+    total_sheet = ""
+    total_row = ""
+
+    for row in controls.itertuples(index=False):
+        label = str(row.label).strip()
+        label_key = label.casefold()
+        value = str(row.value).strip()
+        if label_key in BROKER_LABELS and value:
+            broker = value
+        elif label_key in REF_LABELS and value and not statement_ref:
+            statement_ref = value
+        elif label_key in CCY_LABELS and value:
+            currency = currency_of(value) or value.upper()
+        elif label_key in TOTAL_LABELS and value:
+            stated_total = parse_amount(value)
+            stated_total_text = value
+            currency = currency or currency_of(value)
+            total_sheet = row.source_sheet
+            total_row = row.source_row
+        elif row.control_type == "statement_total" and stated_total is None:
+            stated_total = parse_amount(value)
+            stated_total_text = value
+            currency = currency or currency_of(value)
+            total_sheet = row.source_sheet
+            total_row = row.source_row
+        elif row.control_type == "cover_sheet" and not value and not broker:
+            broker = label
+
+    if not detail.empty:
+        columns = {column.casefold(): column for column in detail.columns}
+        if not broker and "broker" in columns:
+            broker = next(value for value in detail[columns["broker"]] if value)
+        if not statement_ref:
+            for key in ("statement id", "statement ref", "remittance id"):
+                if key in columns and detail[columns[key]].ne("").any():
+                    statement_ref = next(value for value in detail[columns[key]] if value)
+                    break
+        if not currency and "currency" in columns:
+            codes = sorted({value for value in detail[columns["currency"]] if currency_of(value) or len(value) == 3})
+            if len(codes) == 1:
+                currency = currency_of(codes[0]) or codes[0].upper()
+
+    refs = []
+    for ref in [statement_ref]:
+        if ref and ref not in refs:
+            refs.append(ref)
+    if not detail.empty:
+        for key in ("payment ref", "statement id", "statement ref", "remittance id"):
+            column = {name.casefold(): name for name in detail.columns}.get(key)
+            if column:
+                for value in detail[column]:
+                    if value and value not in refs:
+                        refs.append(value)
+
+    return {
+        "broker": broker,
+        "statement_reference": statement_ref,
+        "match_refs": refs,
+        "name_tokens": name_tokens(broker),
+        "currency": currency or "GBP",
+        "statement_total": stated_total,
+        "statement_total_text": stated_total_text,
+        "source_file": total_file,
+        "source_sheet": total_sheet,
+        "source_row": total_row,
+    }
+
+
+frames_by_file = {}
+for dataset_name, frame in remittance_details.items():
+    filename = dataset_name.split(" | ", 1)[0]
+    frames_by_file.setdefault(filename, []).append(frame)
+
+statements = [statement_for(filename, frames) for filename, frames in frames_by_file.items()]
+statements = [row for row in statements if row["statement_reference"] or row["statement_total"] is not None]
+
+bank = bank_transactions.copy()
+bank["credit"] = bank["credit_amount"].map(parse_amount)
+bank["debit"] = bank["debit_amount"].map(parse_amount)
+credits = bank[bank["credit"].notna() & (bank["credit"] > 0)].copy()
+excluded_debits = bank[bank["debit"].notna() & (bank["debit"] > 0) & bank["credit"].isna()]
+
+
+def bank_blob(row):
+    return " ".join(str(getattr(row, column)) for column in ("counterparty_name", "bank_reference", "narrative")).upper()
+
+
+def matching_statements(row):
+    blob = bank_blob(row)
+    hits = []
+    for statement in statements:
+        ref_hits = [ref for ref in statement["match_refs"] if ref.upper() in blob]
+        token_hits = [token for token in statement["name_tokens"] if text_has_token(blob, token)]
+        if ref_hits or token_hits:
+            hits.append((statement, ref_hits, token_hits))
+    return hits
+
+
+assignments = []
+unresolved_credits = []
+for row in credits.itertuples(index=False):
+    hits = matching_statements(row)
+    receipt = {
+        "transaction_id": row.transaction_id,
+        "receipt_date": row.value_date,
+        "currency": row.currency,
+        "amount": row.credit,
+        "counterparty_name": row.counterparty_name,
+        "bank_reference": row.bank_reference,
+        "narrative": row.narrative,
+    }
+    if len(hits) == 1:
+        statement, ref_hits, token_hits = hits[0]
+        receipt["statement_reference"] = statement["statement_reference"]
+        receipt["link"] = "; ".join(
+            ([f"reference {', '.join(ref_hits)}"] if ref_hits else [])
+            + ([f"name {', '.join(token_hits)}"] if token_hits else [])
+        )
+        if row.currency != statement["currency"]:
+            receipt["link"] += f"; currency {row.currency} vs statement {statement['currency']}"
+        assignments.append(receipt)
+    else:
+        receipt["statement_reference"] = ""
+        if len(hits) > 1:
+            receipt["link"] = "more than one statement shares this name or reference; left unmatched"
+        else:
+            receipt["link"] = "no broker name or statement reference in the bank fields"
+        unresolved_credits.append(receipt)
+
+assigned = pd.DataFrame(assignments)
+results = []
+
+for statement in statements:
+    linked = (
+        assigned[assigned["statement_reference"].eq(statement["statement_reference"])]
+        if not assigned.empty
+        else assigned
+    )
+    received = float(linked["amount"].sum()) if not linked.empty else 0.0
+    total = statement["statement_total"]
+    variance = None if total is None else round(received - total, 2)
+    ids = ", ".join(linked["transaction_id"]) if not linked.empty else ""
+    dates = ", ".join(linked["receipt_date"]) if not linked.empty else ""
+    narratives = " | ".join(linked["narrative"]) if not linked.empty else ""
+    links = "; ".join(dict.fromkeys(linked["link"])) if not linked.empty else ""
+
+    if linked.empty:
+        status = "no identified bank receipt"
+        reason = "No bank credit names this broker or quotes this statement reference."
+    elif variance is not None and abs(variance) <= ROUNDING_TOLERANCE:
+        status = "matched"
+        reason = f"{links}. Combined receipts {received:,.2f} equal the statement total."
+    else:
+        status = "amount difference"
+        reason = (
+            f"{links}. Bank received {received:,.2f} against statement total {total:,.2f} "
+            f"(variance {variance:,.2f})."
+        )
+        if narratives:
+            reason += f" Bank narrative: {narratives}."
+
+    source = statement["source_file"]
+    if statement["source_sheet"]:
+        source = f"{source} | {statement['source_sheet']}"
+
+    results.append({
+        "broker": statement["broker"],
+        "statement_reference": statement["statement_reference"],
+        "bank_transaction_ids": ids,
+        "receipt_dates": dates,
+        "statement_total": total,
+        "currency": statement["currency"],
+        "bank_amount_received": round(received, 2),
+        "variance": variance,
+        "status": status,
+        "reason": reason,
+        "source_file_sheet": source,
+        "source_row": statement["source_row"],
+        "bank_narratives": narratives,
+    })
+
+for receipt in unresolved_credits:
+    results.append({
+        "broker": receipt["counterparty_name"],
+        "statement_reference": "",
+        "bank_transaction_ids": receipt["transaction_id"],
+        "receipt_dates": receipt["receipt_date"],
+        "statement_total": None,
+        "currency": receipt["currency"],
+        "bank_amount_received": round(receipt["amount"], 2),
+        "variance": None,
+        "status": "unmatched bank credit",
+        "reason": f"{receipt['link']}. Narrative: {receipt['narrative']}.",
+        "source_file_sheet": "bank_transactions_may_2026.csv",
+        "source_row": "",
+        "bank_narratives": receipt["narrative"],
+    })
+
+bank_to_remittance = pd.DataFrame(results)
+bank_receipt_lines = pd.DataFrame(assignments + unresolved_credits)
+
+pd.set_option("display.max_colwidth", 160)
+pd.set_option("display.max_rows", 50)
+# display(bank_to_remittance)
+# display(bank_receipt_lines)
+print(bank_to_remittance.to_string(index=False))
+print(bank_receipt_lines.to_string(index=False))
+print(
+    f"Rounding tolerance: {ROUNDING_TOLERANCE:.2f}. "
+    f"Debits excluded from premium receipts: "
+    + ", ".join(
+        f"{row.transaction_id} {row.currency} {row.debit:.2f} ({row.narrative})"
+        for row in excluded_debits.itertuples(index=False)
+    )
+)
+
+import re
+
+PENNY_TOLERANCE = 0.01
+
+TXN_GROUPS = {
+    "NB": "new business",
+    "NEW BUSINESS": "new business",
+    "CAN": "cancellation",
+    "CANCELLATION": "cancellation",
+    "MTA": "adjustment",
+    "END": "adjustment",
+    "ENDORSEMENT": "adjustment",
+}
+
+
+def parse_money(text):
+    if text is None or str(text).strip() == "":
+        return None
+    raw = str(text).strip()
+    negative = raw.startswith("(") and raw.endswith(")")
+    cleaned = re.sub(r"\b[A-Z]{3}\b", "", raw.strip("()"))
+    cleaned = cleaned.replace(",", "").strip()
+    if cleaned in {"", "-"}:
+        return None
+    value = float(cleaned)
+    return -value if negative else value
+
+
+def column(frame, *names):
+    lookup = {name.casefold(): name for name in frame.columns}
+    for name in names:
+        if name.casefold() in lookup:
+            return lookup[name.casefold()]
+    return None
+
+
+def first_value(frame, *names):
+    found = column(frame, *names)
+    if found is None:
+        return ""
+    for value in frame[found]:
+        if str(value).strip():
+            return str(value).strip()
+    return ""
+
+
+def broker_for(frame):
+    on_row = first_value(frame, "Broker")
+    if on_row:
+        return on_row
+    filename = frame["source_file"].iloc[0]
+    controls = source_controls[source_controls["source_file"].eq(filename)]
+    labelled = controls[controls["label"].str.casefold().eq("broker")]
+    if not labelled.empty and str(labelled.iloc[0]["value"]).strip():
+        return str(labelled.iloc[0]["value"]).strip()
+    cover = controls[controls["control_type"].eq("cover_sheet") & controls["value"].eq("")]
+    if not cover.empty:
+        return str(cover.iloc[0]["label"]).strip()
+    return ""
+
+
+def broker_key(name):
+    text = re.sub(r"[^A-Z0-9 ]", " ", str(name).upper())
+    text = re.sub(r"\b(LTD|LIMITED|PLC|SA|LLP)\b", " ", text)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def policy_key(reference):
+    """Comparable policy key. Does not replace the reference stored on the row."""
+    text = str(reference).upper().strip()
+    if not text:
+        return ""
+    text = re.sub(r"[-/\s]*(CAN|ENDT\d*|MTA)$", "", text)
+    text = re.sub(r"\s+", "", text)
+    year_only = re.fullmatch(r"(\d{4})[/-](\d+)", text)
+    if year_only:
+        text = f"POL-{year_only.group(1)}-{int(year_only.group(2)):04d}"
+    short_pol = re.fullmatch(r"POL(\d{1,4})", text)
+    if short_pol:
+        text = f"POL-2026-{int(short_pol.group(1)):04d}"
+    return re.sub(r"[^A-Z0-9]", "", text)
+
+
+def name_key(name):
+    text = str(name).upper().replace("&", " AND ")
+    text = re.sub(r"\b(LTD|LIMITED|PLC|SA|LLP|GROUP)\b", " ", text)
+    return re.sub(r"[^A-Z0-9]", "", text)
+
+
+def txn_group(label):
+    return TXN_GROUPS.get(str(label).upper().strip(), "")
+
+
+def money_fields(frame):
+    if column(frame, "GBP Settlement Amount"):
+        return column(frame, "GBP Settlement Amount"), "GBP"
+    for name in ("Net Settlement", "Amount Due MGA", "Amount Due", "Net Due", "Commission Amount"):
+        found = column(frame, name)
+        if found:
+            return found, ""
+    return None, ""
+
+
+lines = []
+for dataset_name, frame in remittance_details.items():
+    amount_column, forced_currency = money_fields(frame)
+    policy_column = column(frame, "Policy No", "Policy Reference", "UW Ref", "Policy", "Policy / Risk Ref")
+    insured_column = column(frame, "Insured", "Insured Name", "Client", "Assured")
+    txn_column = column(frame, "Transaction Type", "Txn Type")
+    currency_column = column(frame, "Currency")
+    broker = broker_for(frame)
+    for row in frame.to_dict("records"):
+        amount_text = row.get(amount_column, "") if amount_column else ""
+        currency = forced_currency or (row.get(currency_column, "") if currency_column else "") or "GBP"
+        policy_reference = row.get(policy_column, "") if policy_column else ""
+        lines.append({
+            "broker": broker,
+            "broker_key": broker_key(broker),
+            "source_file": row["source_file"],
+            "source_sheet": row["source_sheet"],
+            "source_row": row["source_row"],
+            "policy_reference": policy_reference,
+            "policy_key": policy_key(policy_reference),
+            "insured_name": row.get(insured_column, "") if insured_column else "",
+            "txn_type": row.get(txn_column, "") if txn_column else "",
+            "amount": parse_money(amount_text),
+            "currency": currency,
+        })
+
+bdx_rows = []
+for row in premium_bdx.itertuples(index=False):
+    bdx_rows.append({
+        "bdx_record_id": row.bdx_record_id,
+        "broker": row.broker_name,
+        "broker_key": broker_key(row.broker_name),
+        "policy_reference": row.policy_reference,
+        "policy_key": policy_key(row.policy_reference),
+        "insured_name": row.insured_name,
+        "txn_type": row.transaction_type,
+        "amount": parse_money(row.settlement_amount_gbp),
+        "currency": row.settlement_currency,
+        "used": False,
+    })
+
+
+def describe_checks(line, match):
+    notes = []
+    if name_key(line["insured_name"]) == name_key(match["insured_name"]):
+        notes.append("insured name agrees")
+    else:
+        notes.append(f"insured name differs ({line['insured_name']} vs {match['insured_name']})")
+    if line["txn_type"] and match["txn_type"] and line["txn_type"].upper() != match["txn_type"].upper():
+        if txn_group(line["txn_type"]) and txn_group(line["txn_type"]) == txn_group(match["txn_type"]):
+            notes.append(f"transaction label {line['txn_type']} vs {match['txn_type']}")
+        else:
+            notes.append(f"transaction type {line['txn_type']} vs {match['txn_type']}")
+    if line["currency"] != match["currency"]:
+        notes.append(f"currency {line['currency']} vs {match['currency']}")
+    return "; ".join(notes)
+
+
+results = []
+seen_policy = set()
+for line in lines:
+    same_broker = [row for row in bdx_rows if row["broker_key"] == line["broker_key"]]
+    policy_hits = [row for row in same_broker if line["policy_key"] and row["policy_key"] == line["policy_key"]]
+    status = ""
+    reason = ""
+    match = None
+
+    duplicate = bool(line["policy_key"]) and (line["broker_key"], line["policy_key"]) in seen_policy
+    if line["policy_key"]:
+        seen_policy.add((line["broker_key"], line["policy_key"]))
+
+    if duplicate:
+        status = "duplicate remittance line"
+        reason = "This policy reference is repeated on the remittance. The BDX record was not used a second time."
+    elif len(policy_hits) == 1:
+        match = policy_hits[0]
+        if match["used"]:
+            status = "duplicate remittance line"
+            reason = f"{match['bdx_record_id']} is already linked to another remittance line."
+            match = None
+        else:
+            match["used"] = True
+    elif len(policy_hits) > 1:
+        status = "unresolved"
+        ids = ", ".join(row["bdx_record_id"] for row in policy_hits)
+        reason = f"More than one BDX record shares this policy reference ({ids})."
+    elif not line["policy_key"]:
+        name_hits = [
+            row for row in same_broker
+            if not row["used"]
+            and name_key(line["insured_name"])
+            and name_key(row["insured_name"]) == name_key(line["insured_name"])
+        ]
+        loose_hits = [
+            row for row in same_broker
+            if not row["used"]
+            and name_key(line["insured_name"])
+            and name_key(line["insured_name"]) in name_key(row["insured_name"])
+        ]
+        candidates = name_hits or loose_hits
+        status = "unresolved"
+        if len(candidates) > 1:
+            ids = ", ".join(
+                f"{row['bdx_record_id']} {row['policy_reference']} {row['insured_name']}" for row in candidates
+            )
+            reason = f"No policy reference. More than one BDX record could fit ({ids})."
+        elif len(candidates) == 1:
+            reason = (
+                f"No policy reference. Only {candidates[0]['bdx_record_id']} has a similar insured name, "
+                "which is not enough to assign it."
+            )
+        else:
+            reason = "No policy reference and no single BDX insured name to compare."
+    else:
+        status = "unresolved"
+        reason = f"No BDX policy reference matches {line['policy_reference']} for this broker."
+
+    variance = None
+    if match is not None:
+        variance = (
+            None if line["amount"] is None or match["amount"] is None
+            else round(line["amount"] - match["amount"], 2)
+        )
+        checks = describe_checks(line, match)
+        if variance is not None and abs(variance) <= PENNY_TOLERANCE and line["currency"] == match["currency"]:
+            status = "matched"
+            reason = f"Policy reference matches {match['bdx_record_id']}. {checks}."
+        else:
+            status = "amount difference"
+            reason = (
+                f"Policy reference matches {match['bdx_record_id']}. {checks}. "
+                f"Remittance {line['amount']:,.2f} vs BDX {match['amount']:,.2f} ({line['currency']})."
+            )
+
+    results.append({
+        "broker": line["broker"],
+        "source_file": line["source_file"],
+        "source_sheet": line["source_sheet"],
+        "source_row": line["source_row"],
+        "remittance_policy_reference": line["policy_reference"],
+        "insured_name": line["insured_name"],
+        "bdx_record_id": match["bdx_record_id"] if match else "",
+        "bdx_policy_reference": match["policy_reference"] if match else "",
+        "remittance_amount": line["amount"],
+        "bdx_amount": match["amount"] if match else None,
+        "currency": line["currency"],
+        "amount_variance": variance,
+        "status": status,
+        "reason": reason,
+    })
+
+remittance_to_bdx = pd.DataFrame(results)
+bdx_without_remittance = pd.DataFrame([
+    {
+        "bdx_record_id": row["bdx_record_id"],
+        "broker": row["broker"],
+        "bdx_policy_reference": row["policy_reference"],
+        "insured_name": row["insured_name"],
+        "transaction_type": row["txn_type"],
+        "settlement_amount": row["amount"],
+        "currency": row["currency"],
+    }
+    for row in bdx_rows
+    if not row["used"]
+])
+
+pd.set_option("display.max_colwidth", 140)
+pd.set_option("display.max_rows", 40)
+# display(remittance_to_bdx)
+print(f"Rounding tolerance: {PENNY_TOLERANCE:.2f}. Variance is remittance amount minus BDX settlement amount.")
+print("BDX records with no remittance match:")
+# display(bdx_without_remittance)
+print(remittance_to_bdx.to_string(index=False))
+print(bdx_without_remittance.to_string(index=False))
+
+save_html_page(
+    "profile.html",
+    "Source Data Profile",
+    [
+        ("Loaded data profile", source_profile),
+    ],
+)
+
+save_html_page(
+    "bank_to_remittance_reconciliation.html",
+    "Bank to Remittance Reconciliation",
+    [
+        ("Statement reconciliation", bank_to_remittance),
+        ("Bank receipt details", bank_receipt_lines),
+    ],
+)
+
+save_html_page(
+    "remittance_to_bdx_reconciliation.html",
+    "Remittance to Premium BDX Reconciliation",
+    [
+        ("Remittance line reconciliation", remittance_to_bdx),
+        ("BDX records without a confirmed remittance match", bdx_without_remittance),
+    ],
+)
