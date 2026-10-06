@@ -43,3 +43,36 @@ Produce a Jupyter notebook that:
 6. Explains assumptions, tolerances, and cases requiring manual review.
 
 Do not force every item to match. A defensible exception is better than an unsafe match.
+
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+# Diesta Reconciliation Analysis
+
+This project analyses the supplied bank transactions, broker remittances, and premium BDX records.
+
+## HTML report views
+
+The analysis produces three HTML views:
+
+- `profile.html` — loaded source files, key fields, controls, and data-quality observations.
+- `bank_to_remittance_reconciliation.html` — bank receipts linked to broker statements, including variances and unresolved credits.
+- `remittance_to_bdx_reconciliation.html` — remittance lines compared with premium BDX records, including matched lines and exceptions.
+
+## Run the analysis
+
+From the project root—the folder containing `execute.py`—run:
+
+```bash
+python execute.py
+```
+
+The script refreshes the HTML reports. Open the `.html` files above in a browser to review them.
+
+If the required packages are not installed, install them first:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+Keep the supplied input files in the expected `data/` and `data/remittances/` folders so `execute.py` can find them.
