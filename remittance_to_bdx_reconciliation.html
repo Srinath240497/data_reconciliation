@@ -47,11 +47,13 @@
       <th>insured_name</th>
       <th>bdx_record_id</th>
       <th>bdx_policy_reference</th>
+      <th>match_method</th>
       <th>remittance_amount</th>
       <th>bdx_amount</th>
       <th>currency</th>
       <th>amount_variance</th>
       <th>status</th>
+      <th>reason_code</th>
       <th>reason</th>
     </tr>
   </thead>
@@ -65,11 +67,13 @@
       <td>Sterling Construction Limited</td>
       <td>BDX-0001</td>
       <td>POL-2026-0001</td>
+      <td>policy reference</td>
       <td>8500.0</td>
       <td>8500.0</td>
       <td>GBP</td>
       <td>0.0</td>
       <td>matched</td>
+      <td>MATCHED</td>
       <td>Policy reference matches BDX-0001. insured name agrees; transaction label NB vs New Business.</td>
     </tr>
     <tr>
@@ -81,11 +85,13 @@
       <td>A.B.C. Technology Ltd</td>
       <td>BDX-0002</td>
       <td>POL-2026-0002</td>
+      <td>policy reference</td>
       <td>6375.0</td>
       <td>6375.0</td>
       <td>GBP</td>
       <td>0.0</td>
       <td>matched</td>
+      <td>MATCHED</td>
       <td>Policy reference matches BDX-0002. insured name agrees; transaction label NB vs New Business.</td>
     </tr>
     <tr>
@@ -97,11 +103,13 @@
       <td>Blue Harbour Estates Limited</td>
       <td>BDX-0003</td>
       <td>POL-2026-0003</td>
+      <td>policy reference</td>
       <td>-1020.0</td>
       <td>-1020.0</td>
       <td>GBP</td>
       <td>0.0</td>
       <td>matched</td>
+      <td>MATCHED</td>
       <td>Policy reference matches BDX-0003. insured name agrees; transaction label CAN vs Cancellation.</td>
     </tr>
     <tr>
@@ -113,11 +121,13 @@
       <td>Greenfield Farms Ltd</td>
       <td>BDX-0004</td>
       <td>POL-2026-0004</td>
+      <td>policy reference</td>
       <td>1912.5</td>
       <td>1912.5</td>
       <td>GBP</td>
       <td>0.0</td>
       <td>matched</td>
+      <td>MATCHED</td>
       <td>Policy reference matches BDX-0004. insured name agrees; transaction label MTA vs Endorsement.</td>
     </tr>
     <tr>
@@ -129,12 +139,14 @@
       <td>Northshore Energy Services Ltd</td>
       <td>BDX-0005</td>
       <td>POL-2026-0005</td>
+      <td>policy reference</td>
       <td>8250.0</td>
       <td>8500.0</td>
       <td>GBP</td>
       <td>-250.0</td>
       <td>amount difference</td>
-      <td>Policy reference matches BDX-0005. insured name agrees; transaction label NB vs New Business. Remittance 8,250.00 vs BDX 8,500.00 (GBP).</td>
+      <td>AMOUNT_VARIANCE</td>
+      <td>Policy reference matches BDX-0005. insured name agrees; transaction label NB vs New Business. Remittance 8,250.00 vs BDX 8,500.00 (GBP; variance -250.00).</td>
     </tr>
     <tr>
       <td>Apex Risk Partners Ltd</td>
@@ -145,11 +157,13 @@
       <td>Thames Logistics Limited</td>
       <td>BDX-0006</td>
       <td>POL-2026-0006</td>
+      <td>policy reference</td>
       <td>4250.0</td>
       <td>4250.0</td>
       <td>GBP</td>
       <td>0.0</td>
       <td>matched</td>
+      <td>MATCHED</td>
       <td>Policy reference matches BDX-0006. insured name agrees; transaction label NB vs New Business.</td>
     </tr>
     <tr>
@@ -161,12 +175,14 @@
       <td>Thames Logistics Limited</td>
       <td></td>
       <td></td>
+      <td></td>
       <td>4250.0</td>
       <td></td>
       <td>GBP</td>
       <td></td>
       <td>duplicate remittance line</td>
-      <td>This policy reference is repeated on the remittance. The BDX record was not used a second time.</td>
+      <td>DUPLICATE_LINE</td>
+      <td>The broker, policy reference, insured name, transaction type, currency, and amount repeat an earlier remittance line. The BDX record was not used a second time.</td>
     </tr>
     <tr>
       <td>Continental Coverholders SA</td>
@@ -177,11 +193,13 @@
       <td>Riviera Foods SARL</td>
       <td>BDX-0015</td>
       <td>POL-2026-0401</td>
+      <td>policy reference</td>
       <td>8600.0</td>
       <td>8600.0</td>
       <td>GBP</td>
       <td>0.0</td>
       <td>matched</td>
+      <td>MATCHED</td>
       <td>Policy reference matches BDX-0015. insured name agrees; transaction label NB vs New Business.</td>
     </tr>
     <tr>
@@ -193,11 +211,13 @@
       <td>Alpine Components GmbH</td>
       <td>BDX-0016</td>
       <td>POL-2026-0402</td>
+      <td>policy reference</td>
       <td>4300.0</td>
       <td>4300.0</td>
       <td>GBP</td>
       <td>0.0</td>
       <td>matched</td>
+      <td>MATCHED</td>
       <td>Policy reference matches BDX-0016. insured name agrees; transaction label NB vs New Business.</td>
     </tr>
     <tr>
@@ -209,11 +229,13 @@
       <td>Nordic Fleet AB</td>
       <td>BDX-0017</td>
       <td>POL-2026-0403</td>
+      <td>policy reference</td>
       <td>-1032.0</td>
       <td>-1032.0</td>
       <td>GBP</td>
       <td>0.0</td>
       <td>matched</td>
+      <td>MATCHED</td>
       <td>Policy reference matches BDX-0017. insured name agrees; transaction label CAN vs Cancellation.</td>
     </tr>
     <tr>
@@ -225,11 +247,13 @@
       <td>Crown Dental Group Limited</td>
       <td></td>
       <td></td>
+      <td></td>
       <td>12000.0</td>
       <td></td>
       <td>GBP</td>
       <td></td>
       <td>unresolved</td>
+      <td>NO_BDX_MATCH</td>
       <td>No BDX policy reference matches H-0301 for this broker.</td>
     </tr>
     <tr>
@@ -241,12 +265,14 @@
       <td>Orange Retail</td>
       <td></td>
       <td></td>
+      <td></td>
       <td>7200.0</td>
       <td></td>
       <td>GBP</td>
       <td></td>
       <td>unresolved</td>
-      <td>No policy reference. More than one BDX record could fit (BDX-0019 POL-2026-0302 Orange Retail Ltd, BDX-0020 POL-2026-0303 Orange Retail Group Ltd).</td>
+      <td>AMBIGUOUS_REFERENCE</td>
+      <td>No policy reference. These BDX records are unconfirmed candidates, not ruled out: BDX-0019 policy POL-2026-0302 risk RISK-HR-302 Orange Retail Ltd 7,200.00 GBP; BDX-0020 policy POL-2026-0303 risk RISK-HR-303 Orange Retail Group Ltd 7,200.00 GBP.</td>
     </tr>
     <tr>
       <td>Harbour Specialty Ltd</td>
@@ -257,11 +283,13 @@
       <td>Canal Medical Centre Ltd</td>
       <td>BDX-0021</td>
       <td>POL-2026-0304</td>
+      <td>policy reference</td>
       <td>17300.0</td>
       <td>17300.0</td>
       <td>GBP</td>
       <td>0.0</td>
       <td>matched</td>
+      <td>MATCHED</td>
       <td>Policy reference matches BDX-0021. insured name agrees; transaction label MTA vs Endorsement.</td>
     </tr>
     <tr>
@@ -273,11 +301,13 @@
       <td>Lime Street Manufacturing Ltd</td>
       <td>BDX-0007</td>
       <td>POL-2026-0101</td>
+      <td>policy reference</td>
       <td>17000.0</td>
       <td>17000.0</td>
       <td>GBP</td>
       <td>0.0</td>
       <td>matched</td>
+      <td>MATCHED</td>
       <td>Policy reference matches BDX-0007. insured name agrees.</td>
     </tr>
     <tr>
@@ -289,11 +319,13 @@
       <td>Red Kite Hospitality Limited</td>
       <td>BDX-0008</td>
       <td>POL-2026-0102</td>
+      <td>policy reference</td>
       <td>12750.0</td>
       <td>12750.0</td>
       <td>GBP</td>
       <td>0.0</td>
       <td>matched</td>
+      <td>MATCHED</td>
       <td>Policy reference matches BDX-0008. insured name agrees.</td>
     </tr>
     <tr>
@@ -305,11 +337,13 @@
       <td>Cobalt Marine Ltd</td>
       <td>BDX-0009</td>
       <td>POL-2026-0103</td>
+      <td>policy reference</td>
       <td>10200.0</td>
       <td>10200.0</td>
       <td>GBP</td>
       <td>0.0</td>
       <td>matched</td>
+      <td>MATCHED</td>
       <td>Policy reference matches BDX-0009. insured name agrees.</td>
     </tr>
     <tr>
@@ -321,11 +355,13 @@
       <td>Oak and Vale Developments Ltd</td>
       <td>BDX-0010</td>
       <td>POL-2026-0104</td>
+      <td>policy reference</td>
       <td>10050.0</td>
       <td>10050.0</td>
       <td>GBP</td>
       <td>0.0</td>
       <td>matched</td>
+      <td>MATCHED</td>
       <td>Policy reference matches BDX-0010. insured name agrees.</td>
     </tr>
     <tr>
@@ -337,11 +373,13 @@
       <td>Union Hardware PLC</td>
       <td>BDX-0011</td>
       <td>POL-2026-0201</td>
+      <td>policy reference</td>
       <td>85000.0</td>
       <td>85000.0</td>
       <td>GBP</td>
       <td>0.0</td>
       <td>matched</td>
+      <td>MATCHED</td>
       <td>Policy reference matches BDX-0011. insured name agrees.</td>
     </tr>
     <tr>
@@ -353,11 +391,13 @@
       <td>Metro Plant Hire Ltd</td>
       <td>BDX-0012</td>
       <td>POL-2026-0202</td>
+      <td>policy reference</td>
       <td>42500.0</td>
       <td>42500.0</td>
       <td>GBP</td>
       <td>0.0</td>
       <td>matched</td>
+      <td>MATCHED</td>
       <td>Policy reference matches BDX-0012. insured name agrees.</td>
     </tr>
     <tr>
@@ -369,11 +409,13 @@
       <td>Keystone Distribution Limited</td>
       <td>BDX-0013</td>
       <td>POL-2026-0203</td>
+      <td>policy reference</td>
       <td>51000.0</td>
       <td>51000.0</td>
       <td>GBP</td>
       <td>0.0</td>
       <td>matched</td>
+      <td>MATCHED</td>
       <td>Policy reference matches BDX-0013. insured name agrees.</td>
     </tr>
     <tr>
@@ -385,11 +427,13 @@
       <td>Southbank Storage Ltd</td>
       <td>BDX-0014</td>
       <td>POL-2026-0204</td>
+      <td>policy reference</td>
       <td>21500.0</td>
       <td>21500.0</td>
       <td>GBP</td>
       <td>0.0</td>
       <td>matched</td>
+      <td>MATCHED</td>
       <td>Policy reference matches BDX-0014. insured name agrees.</td>
     </tr>
   </tbody>
@@ -403,6 +447,7 @@
       <th>transaction_type</th>
       <th>settlement_amount</th>
       <th>currency</th>
+      <th>review_note</th>
     </tr>
   </thead>
   <tbody>
@@ -414,6 +459,7 @@
       <td>New Business</td>
       <td>12000.0</td>
       <td>GBP</td>
+      <td>No remittance line confirms this BDX record.</td>
     </tr>
     <tr>
       <td>BDX-0019</td>
@@ -423,6 +469,7 @@
       <td>New Business</td>
       <td>7200.0</td>
       <td>GBP</td>
+      <td>Unconfirmed candidate for the Harbour line with no policy reference; not a confirmed match.</td>
     </tr>
     <tr>
       <td>BDX-0020</td>
@@ -432,6 +479,7 @@
       <td>New Business</td>
       <td>7200.0</td>
       <td>GBP</td>
+      <td>Unconfirmed candidate for the Harbour line with no policy reference; not a confirmed match.</td>
     </tr>
     <tr>
       <td>BDX-0022</td>
@@ -441,6 +489,7 @@
       <td>New Business</td>
       <td>12800.0</td>
       <td>GBP</td>
+      <td>No remittance line confirms this BDX record.</td>
     </tr>
   </tbody>
 </table></div>

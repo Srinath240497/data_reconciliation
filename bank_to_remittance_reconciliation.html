@@ -48,6 +48,7 @@
       <th>bank_amount_received</th>
       <th>variance</th>
       <th>status</th>
+      <th>reason_code</th>
       <th>reason</th>
       <th>source_file_sheet</th>
       <th>source_row</th>
@@ -65,6 +66,7 @@
       <td>32517.5</td>
       <td>0.0</td>
       <td>matched</td>
+      <td>MATCHED</td>
       <td>reference APX-APR-2026; name APEX. Combined receipts 32,517.50 equal the statement total.</td>
       <td>apex_risk_partners_remittance_apr_2026.csv</td>
       <td>13</td>
@@ -80,7 +82,8 @@
       <td>11867.8</td>
       <td>-0.2</td>
       <td>amount difference</td>
-      <td>name CONTINENTAL. Bank received 11,867.80 against statement total 11,868.00 (variance -0.20). Bank narrative: CONTINENTAL COVERHOLDERS APRIL SETTLEMENT EUR FX 0.8600.</td>
+      <td>AMOUNT_VARIANCE</td>
+      <td>name CONTINENTAL. Bank received 11,867.80 against statement total 11,868.00 (variance -0.20 GBP). Bank narrative: CONTINENTAL COVERHOLDERS APRIL SETTLEMENT EUR FX 0.8600.</td>
       <td>continental_coverholders_apr_2026.xlsx | EUR Settlement</td>
       <td>9</td>
       <td>CONTINENTAL COVERHOLDERS APRIL SETTLEMENT EUR FX 0.8600</td>
@@ -93,8 +96,9 @@
       <td>36500.0</td>
       <td>GBP</td>
       <td>0.0</td>
-      <td>-36500.0</td>
+      <td></td>
       <td>no identified bank receipt</td>
+      <td>NO_IDENTIFIED_RECEIPT</td>
       <td>No bank credit names this broker or quotes this statement reference.</td>
       <td>harbour_specialty_remittance_apr_2026.xlsx | Summary</td>
       <td>4</td>
@@ -110,7 +114,8 @@
       <td>49990.0</td>
       <td>-10.0</td>
       <td>amount difference</td>
-      <td>reference REM-0426-NSB; name NORTHSHORE. Bank received 49,990.00 against statement total 50,000.00 (variance -10.00). Bank narrative: NORTHSHORE BROKING LTD REM-0426-NSB OUR CHG GBP10 NET.</td>
+      <td>AMOUNT_VARIANCE</td>
+      <td>reference REM-0426-NSB; name NORTHSHORE. Bank received 49,990.00 against statement total 50,000.00 (variance -10.00 GBP). Bank narrative: NORTHSHORE BROKING LTD REM-0426-NSB OUR CHG GBP10 NET.</td>
       <td>northshore_broking_remittance_apr_2026.xlsx | Cover</td>
       <td>4</td>
       <td>NORTHSHORE BROKING LTD REM-0426-NSB OUR CHG GBP10 NET</td>
@@ -125,6 +130,7 @@
       <td>200000.0</td>
       <td>0.0</td>
       <td>matched</td>
+      <td>MATCHED</td>
       <td>reference PIO-MAY26; name PIONEER. Combined receipts 200,000.00 equal the statement total.</td>
       <td>pioneer_wholesale_statement_may_2026.csv</td>
       <td>6</td>
@@ -140,9 +146,10 @@
       <td>28750.0</td>
       <td></td>
       <td>unmatched bank credit</td>
+      <td>UNMATCHED_BANK_CREDIT</td>
       <td>no broker name or statement reference in the bank fields. Narrative: UBS CLIENT MONEY MAY PREMIUMS.</td>
       <td>bank_transactions_may_2026.csv</td>
-      <td></td>
+      <td>7</td>
       <td>UBS CLIENT MONEY MAY PREMIUMS</td>
     </tr>
   </tbody>
@@ -156,6 +163,8 @@
       <th>counterparty_name</th>
       <th>bank_reference</th>
       <th>narrative</th>
+      <th>source_file</th>
+      <th>source_row</th>
       <th>statement_reference</th>
       <th>link</th>
     </tr>
@@ -169,6 +178,8 @@
       <td>APEX RISK PARTNERS LTD</td>
       <td>FP 483920</td>
       <td>APEX RISK PARTNERS APRIL STATEMENT APX-APR-2026</td>
+      <td>bank_transactions_may_2026.csv</td>
+      <td>2</td>
       <td>APX-APR-2026</td>
       <td>reference APX-APR-2026; name APEX</td>
     </tr>
@@ -180,6 +191,8 @@
       <td>NORTHSHORE BROKING LTD</td>
       <td>CHAPS 809144</td>
       <td>NORTHSHORE BROKING LTD REM-0426-NSB OUR CHG GBP10 NET</td>
+      <td>bank_transactions_may_2026.csv</td>
+      <td>3</td>
       <td>REM-0426-NSB</td>
       <td>reference REM-0426-NSB; name NORTHSHORE</td>
     </tr>
@@ -191,6 +204,8 @@
       <td>PIONEER WHOLESALE BROKERS</td>
       <td>CHAPS 881204</td>
       <td>PIONEER WHOLESALE REM PIO-MAY26 A</td>
+      <td>bank_transactions_may_2026.csv</td>
+      <td>4</td>
       <td>PIO-MAY26</td>
       <td>reference PIO-MAY26; name PIONEER</td>
     </tr>
@@ -202,6 +217,8 @@
       <td>PIONEER WHOLESALE BROKERS</td>
       <td>CHAPS 881205</td>
       <td>PIONEER WHOLESALE REM PIO-MAY26 B</td>
+      <td>bank_transactions_may_2026.csv</td>
+      <td>5</td>
       <td>PIO-MAY26</td>
       <td>reference PIO-MAY26; name PIONEER</td>
     </tr>
@@ -213,6 +230,8 @@
       <td>CONTINENTAL COVERHOLDERS SA</td>
       <td>SEPA 372994</td>
       <td>CONTINENTAL COVERHOLDERS APRIL SETTLEMENT EUR FX 0.8600</td>
+      <td>bank_transactions_may_2026.csv</td>
+      <td>6</td>
       <td>CON-APR-2026</td>
       <td>name CONTINENTAL</td>
     </tr>
@@ -224,6 +243,8 @@
       <td>UNKNOWN BROKER SERVICES</td>
       <td>FP 992310</td>
       <td>UBS CLIENT MONEY MAY PREMIUMS</td>
+      <td>bank_transactions_may_2026.csv</td>
+      <td>7</td>
       <td></td>
       <td>no broker name or statement reference in the bank fields</td>
     </tr>

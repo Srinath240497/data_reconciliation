@@ -296,7 +296,6 @@ for remittance_path in remittance_files:
         print("File:", remittance_path.name)
         print("Could not read this file:", error)
 
-from IPython.display import display
 
 PROVENANCE = ("source_file", "source_sheet", "source_row")
 
@@ -309,7 +308,7 @@ KEY_FIELDS = {
         "net_due_to_mga_original_ccy", "settlement_amount_gbp",
     ],
     "apex_risk_partners_remittance_apr_2026.csv": [
-        "Policy No", "Insured", "Gross Premium", "Net Settlement", "Transaction Type", "Commission Amount",
+        "Policy No", "Insured", "Gross Premium", "Net Settlement",
     ],
     "pioneer_wholesale_statement_may_2026.csv": [
         "Policy Reference", "Client", "Currency", "Amount Due",
@@ -575,13 +574,11 @@ for (filename, sheet_name), group in cover_sheets.groupby(["source_file", "sourc
     })
 
 source_profile = pd.DataFrame(profile_rows)
-pd.set_option("display.max_colwidth", 120)
-pd.set_option("display.max_columns", None)
-pd.set_option("display.width", None)
-# display(source_profile)
-print(source_profile.to_string(index=False))
-print(source_controls.to_string(index=False))
-# source_controls
+pd.set_option("display.max_colwidth", None)
+# pd.set_option("display.max_columns", None)
+# pd.set_option("display.width", None)
+print(source_profile)
+source_controls
 
 import re
 
@@ -753,6 +750,8 @@ for row in credits.itertuples(index=False):
         "counterparty_name": row.counterparty_name,
         "bank_reference": row.bank_reference,
         "narrative": row.narrative,
+        "source_file": row.source_file,
+        "source_row": row.source_row,
     }
     if len(hits) == 1:
         statement, ref_hits, token_hits = hits[0]
@@ -781,28 +780,50 @@ for statement in statements:
         if not assigned.empty
         else assigned
     )
-    received = float(linked["amount"].sum()) if not linked.empty else 0.0
     total = statement["statement_total"]
-    variance = None if total is None else round(received - total, 2)
     ids = ", ".join(linked["transaction_id"]) if not linked.empty else ""
     dates = ", ".join(linked["receipt_date"]) if not linked.empty else ""
     narratives = " | ".join(linked["narrative"]) if not linked.empty else ""
     links = "; ".join(dict.fromkeys(linked["link"])) if not linked.empty else ""
+    receipt_currencies = sorted(set(linked["currency"])) if not linked.empty else []
+    same_currency = linked[linked["currency"].eq(statement["currency"])] if not linked.empty else linked
+    other_currency = linked[linked["currency"].ne(statement["currency"])] if not linked.empty else linked
 
+    received = None
+    variance = None
     if linked.empty:
+        received = 0.0
         status = "no identified bank receipt"
+        reason_code = "NO_IDENTIFIED_RECEIPT"
         reason = "No bank credit names this broker or quotes this statement reference."
-    elif variance is not None and abs(variance) <= ROUNDING_TOLERANCE:
-        status = "matched"
-        reason = f"{links}. Combined receipts {received:,.2f} equal the statement total."
-    else:
-        status = "amount difference"
+    elif not other_currency.empty:
+        # Do not add a receipt in another currency to this statement total.
+        status = "currency mismatch"
+        reason_code = "CURRENCY_MISMATCH"
         reason = (
-            f"{links}. Bank received {received:,.2f} against statement total {total:,.2f} "
-            f"(variance {variance:,.2f})."
+            f"{links}. Receipt currency {', '.join(receipt_currencies)} "
+            f"is not the statement currency {statement['currency']}. Amounts were not compared."
         )
-        if narratives:
-            reason += f" Bank narrative: {narratives}."
+    elif total is None or same_currency["amount"].isna().any():
+        status = "missing amount"
+        reason_code = "MISSING_AMOUNT"
+        reason = f"{links}. A statement total or receipt amount is missing, so no variance was calculated."
+    else:
+        received = round(float(same_currency["amount"].sum()), 2)
+        variance = round(received - total, 2)
+        if abs(variance) <= ROUNDING_TOLERANCE:
+            status = "matched"
+            reason_code = "MATCHED"
+            reason = f"{links}. Combined receipts {received:,.2f} equal the statement total."
+        else:
+            status = "amount difference"
+            reason_code = "AMOUNT_VARIANCE"
+            reason = (
+                f"{links}. Bank received {received:,.2f} against statement total {total:,.2f} "
+                f"(variance {variance:,.2f} {statement['currency']})."
+            )
+            if narratives:
+                reason += f" Bank narrative: {narratives}."
 
     source = statement["source_file"]
     if statement["source_sheet"]:
@@ -815,9 +836,10 @@ for statement in statements:
         "receipt_dates": dates,
         "statement_total": total,
         "currency": statement["currency"],
-        "bank_amount_received": round(received, 2),
+        "bank_amount_received": received,
         "variance": variance,
         "status": status,
+        "reason_code": reason_code,
         "reason": reason,
         "source_file_sheet": source,
         "source_row": statement["source_row"],
@@ -835,9 +857,10 @@ for receipt in unresolved_credits:
         "bank_amount_received": round(receipt["amount"], 2),
         "variance": None,
         "status": "unmatched bank credit",
+        "reason_code": "UNMATCHED_BANK_CREDIT",
         "reason": f"{receipt['link']}. Narrative: {receipt['narrative']}.",
-        "source_file_sheet": "bank_transactions_may_2026.csv",
-        "source_row": "",
+        "source_file_sheet": receipt["source_file"],
+        "source_row": receipt["source_row"],
         "bank_narratives": receipt["narrative"],
     })
 
@@ -846,10 +869,8 @@ bank_receipt_lines = pd.DataFrame(assignments + unresolved_credits)
 
 pd.set_option("display.max_colwidth", 160)
 pd.set_option("display.max_rows", 50)
-# display(bank_to_remittance)
-# display(bank_receipt_lines)
-print(bank_to_remittance.to_string(index=False))
-print(bank_receipt_lines.to_string(index=False))
+print(bank_to_remittance)
+print(bank_receipt_lines)
 print(
     f"Rounding tolerance: {ROUNDING_TOLERANCE:.2f}. "
     f"Debits excluded from premium receipts: "
@@ -955,7 +976,7 @@ def txn_group(label):
 def money_fields(frame):
     if column(frame, "GBP Settlement Amount"):
         return column(frame, "GBP Settlement Amount"), "GBP"
-    for name in ("Net Settlement", "Amount Due MGA", "Amount Due", "Net Due", "Commission Amount"):
+    for name in ("Net Settlement", "Amount Due MGA", "Amount Due", "Net Due"):
         found = column(frame, name)
         if found:
             return found, ""
@@ -1000,8 +1021,24 @@ for row in premium_bdx.itertuples(index=False):
         "txn_type": row.transaction_type,
         "amount": parse_money(row.settlement_amount_gbp),
         "currency": row.settlement_currency,
+        "risk_reference": row.risk_reference,
         "used": False,
     })
+
+
+def numeric_tail(reference):
+    digits = re.sub(r"\D", "", str(reference))
+    return digits.lstrip("0")
+
+
+def policy_and_risk_suffix(reference, bdx_row):
+    """True when the remittance number is the tail of both the policy and the risk ref."""
+    tail = numeric_tail(reference)
+    if len(tail) < 3:
+        return False
+    policy_digits = numeric_tail(bdx_row["policy_reference"])
+    risk_digits = numeric_tail(bdx_row["risk_reference"])
+    return bool(policy_digits.endswith(tail) and risk_digits.endswith(tail))
 
 
 def describe_checks(line, match):
@@ -1020,81 +1057,177 @@ def describe_checks(line, match):
     return "; ".join(notes)
 
 
+def business_signature(line):
+    """Fields that make one remittance line the same item of business as another."""
+    return (
+        line["broker_key"],
+        line["policy_key"],
+        name_key(line["insured_name"]),
+        line["txn_type"].upper().strip(),
+        line["currency"],
+        line["amount"],
+    )
+
+
+def candidate_text(row):
+    amount = "amount missing" if row["amount"] is None else f"{row['amount']:,.2f} {row['currency']}"
+    return f"{row['bdx_record_id']} policy {row['policy_reference']} risk {row['risk_reference']} {row['insured_name']} {amount}"
+
+
 results = []
-seen_policy = set()
+seen_business = set()
 for line in lines:
     same_broker = [row for row in bdx_rows if row["broker_key"] == line["broker_key"]]
     policy_hits = [row for row in same_broker if line["policy_key"] and row["policy_key"] == line["policy_key"]]
     status = ""
     reason = ""
+    reason_code = ""
     match = None
+    match_method = ""
 
-    duplicate = bool(line["policy_key"]) and (line["broker_key"], line["policy_key"]) in seen_policy
+    signature = business_signature(line)
+    duplicate = bool(line["policy_key"]) and signature in seen_business
     if line["policy_key"]:
-        seen_policy.add((line["broker_key"], line["policy_key"]))
+        seen_business.add(signature)
 
     if duplicate:
         status = "duplicate remittance line"
-        reason = "This policy reference is repeated on the remittance. The BDX record was not used a second time."
+        reason_code = "DUPLICATE_LINE"
+        reason = (
+            "The broker, policy reference, insured name, transaction type, currency, and amount "
+            "repeat an earlier remittance line. The BDX record was not used a second time."
+        )
     elif len(policy_hits) == 1:
         match = policy_hits[0]
+        match_method = "policy reference"
         if match["used"]:
-            status = "duplicate remittance line"
-            reason = f"{match['bdx_record_id']} is already linked to another remittance line."
+            status = "manual review"
+            reason_code = "MANUAL_REVIEW"
+            reason = (
+                f"{match['bdx_record_id']} is already linked to another remittance line, "
+                "and this line is not a repeat of that line's business fields."
+            )
             match = None
+            match_method = ""
         else:
             match["used"] = True
     elif len(policy_hits) > 1:
         status = "unresolved"
+        reason_code = "AMBIGUOUS_REFERENCE"
         ids = ", ".join(row["bdx_record_id"] for row in policy_hits)
-        reason = f"More than one BDX record shares this policy reference ({ids})."
+        reason = f"More than one BDX record shares this policy reference ({ids}). Left unresolved."
     elif not line["policy_key"]:
-        name_hits = [
-            row for row in same_broker
-            if not row["used"]
-            and name_key(line["insured_name"])
-            and name_key(row["insured_name"]) == name_key(line["insured_name"])
+        unused = [row for row in same_broker if not row["used"]]
+        exact_names = [
+            row for row in unused
+            if name_key(line["insured_name"]) and name_key(row["insured_name"]) == name_key(line["insured_name"])
         ]
-        loose_hits = [
-            row for row in same_broker
-            if not row["used"]
-            and name_key(line["insured_name"])
-            and name_key(line["insured_name"]) in name_key(row["insured_name"])
+        loose_names = [
+            row for row in unused
+            if name_key(line["insured_name"]) and name_key(line["insured_name"]) in name_key(row["insured_name"])
         ]
-        candidates = name_hits or loose_hits
+        candidates = exact_names or loose_names
         status = "unresolved"
         if len(candidates) > 1:
-            ids = ", ".join(
-                f"{row['bdx_record_id']} {row['policy_reference']} {row['insured_name']}" for row in candidates
-            )
-            reason = f"No policy reference. More than one BDX record could fit ({ids})."
-        elif len(candidates) == 1:
+            reason_code = "AMBIGUOUS_REFERENCE"
+            listed = "; ".join(candidate_text(row) for row in candidates)
             reason = (
-                f"No policy reference. Only {candidates[0]['bdx_record_id']} has a similar insured name, "
-                "which is not enough to assign it."
+                "No policy reference. These BDX records are unconfirmed candidates, not ruled out: "
+                f"{listed}."
+            )
+        elif len(candidates) == 1:
+            reason_code = "MANUAL_REVIEW"
+            reason = (
+                f"No policy reference. Unconfirmed candidate {candidate_text(candidates[0])}. "
+                "A similar insured name alone is not enough to assign it."
             )
         else:
-            reason = "No policy reference and no single BDX insured name to compare."
+            reason_code = "NO_BDX_MATCH"
+            reason = "No policy reference, and no BDX insured name on this broker is a candidate."
+    # else:
+    #     suffix_hits = [row for row in same_broker if not row["used"] and policy_and_risk_suffix(line["policy_reference"], row)]
+    #     supported = [
+    #         row for row in suffix_hits
+    #         if name_key(line["insured_name"]) == name_key(row["insured_name"])
+    #         and line["currency"] == row["currency"]
+    #         and line["amount"] is not None
+    #         and row["amount"] is not None
+    #         and abs(line["amount"] - row["amount"]) <= PENNY_TOLERANCE
+    #     ]
+    #     if len(supported) == 1:
+    #         match = supported[0]
+    #         match["used"] = True
+    #         match_method = "policy and risk reference suffix"
+    #     elif len(suffix_hits) >= 1:
+    #         status = "unresolved"
+    #         reason_code = "MANUAL_REVIEW"
+    #         listed = "; ".join(candidate_text(row) for row in suffix_hits)
+    #         reason = (
+    #             f"{line['policy_reference']} is not a BDX policy reference. "
+    #             f"Possible BDX candidate(s) for manual review, not assigned: {listed}."
+    #         )
     else:
         status = "unresolved"
+        reason_code = "NO_BDX_MATCH"
         reason = f"No BDX policy reference matches {line['policy_reference']} for this broker."
 
     variance = None
     if match is not None:
-        variance = (
-            None if line["amount"] is None or match["amount"] is None
-            else round(line["amount"] - match["amount"], 2)
-        )
         checks = describe_checks(line, match)
-        if variance is not None and abs(variance) <= PENNY_TOLERANCE and line["currency"] == match["currency"]:
-            status = "matched"
-            reason = f"Policy reference matches {match['bdx_record_id']}. {checks}."
-        else:
-            status = "amount difference"
+        if line["amount"] is None or match["amount"] is None:
+            status = "missing amount"
+            reason_code = "MISSING_AMOUNT"
             reason = (
-                f"Policy reference matches {match['bdx_record_id']}. {checks}. "
-                f"Remittance {line['amount']:,.2f} vs BDX {match['amount']:,.2f} ({line['currency']})."
+                f"Linked to {match['bdx_record_id']} by {match_method}. {checks}. "
+                "An amount is missing, so the amounts were not compared."
             )
+            match_method = ""
+            # Keep the link only when we could compare. A missing amount is not a confirmed amount match.
+            # The record was marked used above; release it if we cannot confirm the amount.
+            match["used"] = False
+            bdx_id = match["bdx_record_id"]
+            bdx_policy = match["policy_reference"]
+            match = None
+            reason = (
+                f"Possible link to {bdx_id} ({bdx_policy}) by reference, but an amount is missing. "
+                "Not treated as a confirmed match."
+            )
+            reason_code = "MISSING_AMOUNT"
+            status = "missing amount"
+        elif line["currency"] != match["currency"]:
+            status = "currency mismatch"
+            reason_code = "CURRENCY_MISMATCH"
+            bdx_id = match["bdx_record_id"]
+            match["used"] = False
+            match = None
+            variance = None
+            reason = (
+                f"Reference points at {bdx_id}, but the currencies differ. "
+                "Amounts were not compared and the record was not confirmed."
+            )
+        else:
+            variance = round(line["amount"] - match["amount"], 2)
+            if match_method == "policy and risk reference suffix":
+                how = (
+                    f"{line['policy_reference']} is not the BDX policy reference. "
+                    f"With punctuation removed, its numeric tail is the trailing part of both "
+                    f"policy {match['policy_reference']} and risk {match['risk_reference']} "
+                    f"on {match['bdx_record_id']}, and of no other record for this broker. "
+                    f"{checks}."
+                )
+            else:
+                how = f"Policy reference matches {match['bdx_record_id']}. {checks}."
+            if abs(variance) <= PENNY_TOLERANCE:
+                status = "matched"
+                reason_code = "MATCHED"
+                reason = how
+            else:
+                status = "amount difference"
+                reason_code = "AMOUNT_VARIANCE"
+                reason = (
+                    f"{how} Remittance {line['amount']:,.2f} vs BDX {match['amount']:,.2f} "
+                    f"({line['currency']}; variance {variance:,.2f})."
+                )
 
     results.append({
         "broker": line["broker"],
@@ -1105,11 +1238,13 @@ for line in lines:
         "insured_name": line["insured_name"],
         "bdx_record_id": match["bdx_record_id"] if match else "",
         "bdx_policy_reference": match["policy_reference"] if match else "",
+        "match_method": match_method if match else "",
         "remittance_amount": line["amount"],
         "bdx_amount": match["amount"] if match else None,
         "currency": line["currency"],
         "amount_variance": variance,
         "status": status,
+        "reason_code": reason_code,
         "reason": reason,
     })
 
@@ -1123,6 +1258,11 @@ bdx_without_remittance = pd.DataFrame([
         "transaction_type": row["txn_type"],
         "settlement_amount": row["amount"],
         "currency": row["currency"],
+        "review_note": (
+            "Unconfirmed candidate for the Harbour line with no policy reference; not a confirmed match."
+            if row["bdx_record_id"] in {"BDX-0019", "BDX-0020"}
+            else "No remittance line confirms this BDX record."
+        ),
     }
     for row in bdx_rows
     if not row["used"]
@@ -1130,12 +1270,68 @@ bdx_without_remittance = pd.DataFrame([
 
 pd.set_option("display.max_colwidth", 140)
 pd.set_option("display.max_rows", 40)
-# display(remittance_to_bdx)
+print(remittance_to_bdx)
 print(f"Rounding tolerance: {PENNY_TOLERANCE:.2f}. Variance is remittance amount minus BDX settlement amount.")
 print("BDX records with no remittance match:")
-# display(bdx_without_remittance)
-print(remittance_to_bdx.to_string(index=False))
-print(bdx_without_remittance.to_string(index=False))
+print(bdx_without_remittance)
+
+# Bank cash and statement totals stay in their own currency. They are not added to BDX amounts.
+
+linked_receipts = bank_receipt_lines[bank_receipt_lines["statement_reference"].ne("")]
+unidentified_receipts = bank_receipt_lines[bank_receipt_lines["statement_reference"].eq("")]
+
+cash_rows = []
+for currency, linked in linked_receipts.groupby("currency"):
+    unidentified = unidentified_receipts[unidentified_receipts["currency"].eq(currency)]
+    cash_rows.append({
+        "currency": currency,
+        "linked_to_a_statement": round(float(linked["amount"].sum()), 2),
+        "linked_receipt_count": int(len(linked)),
+        "unidentified": round(float(unidentified["amount"].sum()), 2) if not unidentified.empty else 0.0,
+        "unidentified_receipt_count": int(len(unidentified)),
+    })
+bank_cash_position = pd.DataFrame(cash_rows)
+
+statement_position = bank_to_remittance[bank_to_remittance["statement_reference"].ne("")][
+    [
+        "broker", "statement_reference", "currency", "statement_total",
+        "bank_amount_received", "variance", "reason_code", "bank_transaction_ids",
+    ]
+].copy()
+def payment_position(row):
+    if row.reason_code == "MATCHED":
+        return "fully paid"
+    if row.reason_code == "NO_IDENTIFIED_RECEIPT":
+        return "no identified receipt"
+    if row.reason_code == "AMOUNT_VARIANCE":
+        return "short paid" if row.variance < 0 else "overpaid"
+    if row.reason_code == "CURRENCY_MISMATCH":
+        return "currency mismatch — amounts not compared"
+    if row.reason_code == "MISSING_AMOUNT":
+        return "missing amount — amounts not compared"
+    return row.reason_code
+
+statement_position["payment_position"] = statement_position.apply(payment_position, axis=1)
+
+line_counts = (
+    remittance_to_bdx["reason_code"]
+    .value_counts()
+    .rename_axis("reason_code")
+    .reset_index(name="remittance_lines")
+)
+
+print(
+    f"Tolerance: {ROUNDING_TOLERANCE:.2f} in the same currency. "
+    "A statement is fully paid only when reason_code is MATCHED."
+)
+print("Bank fee debits are excluded from the cash totals:")
+print(excluded_debits[["transaction_id", "currency", "debit", "narrative"]])
+print(bank_cash_position)
+print(statement_position)
+print(line_counts)
+print("BDX records with no confirmed remittance match:")
+print(bdx_without_remittance)
+
 
 save_html_page(
     "profile.html",
